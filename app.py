@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore")
 def load_data():
     demand = pd.read_csv("demand.csv")
     suppliers = pd.read_csv("pune_supplier_dataset_100_entries.csv")
-    emissions = pd.read_csv("transport_route_emissions.csv.csv")
+    emissions = pd.read_csv("transport_route_emissions.csv")
     distance_df = pd.read_excel("Distance Dataset.xlsx")
     inventory = pd.read_excel("inventory location.xlsx")
     return demand, suppliers, emissions, distance_df, inventory
