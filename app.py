@@ -66,7 +66,7 @@ vehicle_emissions = {
 }
 
 # === Streamlit UI ===
-st.title("📦 Walmart FreshRoute AI Decision System")
+st.title("FreshRoute AI Decision System")
 user_input = st.text_input("Enter a commodity (e.g. Tomato, Onion):").strip().lower()
 
 if user_input:
