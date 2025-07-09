@@ -1,0 +1,100 @@
+commodity,variety,arrival_date,quantity_demanded_kg,modal_price,district
+Tomatoes,Hybrid,05-10-2023,120,28,Pune
+Spinach,Organic,05-10-2023,80,42,Pune
+Bananas,Local,05-10-2023,150,22,Pune
+Onions,Regular,05-10-2023,200,18,Pune
+Potatoes,Regular,05-10-2023,180,20,Pune
+Carrots,Organic,06-10-2023,130,22,Pune
+Cauliflower,Hybrid,06-10-2023,135,24,Pune
+Apples,Local,06-10-2023,140,26,Pune
+Grapes,Organic,06-10-2023,145,28,Pune
+Cabbage,Regular,06-10-2023,150,20,Pune
+Lemons,Hybrid,07-10-2023,155,22,Pune
+Cucumber,Organic,07-10-2023,160,24,Pune
+Garlic,Regular,07-10-2023,165,26,Pune
+Ginger,Organic,07-10-2023,170,28,Pune
+Pumpkin,Regular,07-10-2023,175,20,Pune
+Peas,Hybrid,08-10-2023,180,22,Pune
+Mangoes,Local,08-10-2023,185,24,Pune
+Papaya,Regular,08-10-2023,190,26,Pune
+Pineapple,Organic,08-10-2023,195,28,Pune
+Beetroot,Regular,08-10-2023,200,20,Pune
+Radish,Hybrid,09-10-2023,205,22,Pune
+Brinjal,Organic,09-10-2023,210,24,Pune
+Capsicum,Local,09-10-2023,215,26,Pune
+Coriander,Regular,09-10-2023,220,28,Pune
+Mint,Organic,09-10-2023,225,20,Pune
+Okra,Hybrid,10-10-2023,230,22,Pune
+Sweet Potato,Regular,10-10-2023,235,24,Pune
+Bitter Gourd,Organic,10-10-2023,240,26,Pune
+Drumsticks,Local,10-10-2023,245,28,Pune
+Jackfruit,Regular,10-10-2023,250,20,Pune
+Guava,Local,11-10-2023,255,22,Pune
+Pomegranate,Organic,11-10-2023,260,24,Pune
+Coconut,Regular,11-10-2023,265,26,Pune
+Turmeric,Organic,11-10-2023,270,28,Pune
+Yam,Regular,11-10-2023,275,20,Pune
+Lettuce,Hybrid,12-10-2023,280,22,Pune
+Zucchini,Organic,12-10-2023,285,24,Pune
+Kiwi,Local,12-10-2023,290,26,Pune
+Pear,Regular,12-10-2023,295,28,Pune
+Blueberries,Organic,12-10-2023,300,20,Pune
+Cherries,Local,13-10-2023,305,22,Pune
+Peaches,Regular,13-10-2023,310,24,Pune
+Plums,Organic,13-10-2023,315,26,Pune
+Apricots,Local ,13-10-2023,320,28,Pune
+Figs,Regular,13-10-2023,325,20,Pune
+Dates,Organic,14-10-2023,330,22,Pune
+Almonds,Local,14-10-2023,335,24,Pune
+Walnuts,Regular,14-10-2023,340,26,Pune
+Cashews,Organic,14-10-2023,345,28,Pune
+Raisins,Local,14-10-2023,350,20,Pune
+Mustard Greens,Regular,15-10-2023,355,22,Pune
+Kale,Organic,15-10-2023,360,24,Pune
+Broccoli,Local,15-10-2023,365,26,Pune
+Asparagus,Regular,15-10-2023,370,28,Pune
+Artichoke,Organic,15-10-2023,375,20,Pune
+Green Beans,Local,16-10-2023,380,22,Pune
+Snow Peas,Regular,16-10-2023,385,24,Pune
+Fennel,Organic,16-10-2023,390,26,Pune
+Turnip,Local,16-10-2023,395,28,Pune
+Parsnip,Regular,16-10-2023,400,20,Pune
+Celery,Organic,17-10-2023,405,22,Pune
+Leek,Grade A,17-10-2023,410,24,Pune
+Spring Onion,Local,17-10-2023,415,26,Pune
+Chives,Organic,17-10-2023,420,28,Pune
+Thyme,Local,17-10-2023,425,20,Pune
+Rosemary,Regular,18-10-2023,430,22,Pune
+Basil,Organic,18-10-2023,435,24,Pune
+Sage,Local,18-10-2023,440,26,Pune
+Oregano,Regular,18-10-2023,445,28,Pune
+Tarragon,Organic,18-10-2023,450,20,Pune
+Bay Leaves,Local,19-10-2023,455,22,Pune
+Cinnamon,Regular,19-10-2023,460,24,Pune
+Cloves,Organic,19-10-2023,465,26,Pune
+Cardamom,Local,19-10-2023,470,28,Pune
+Nutmeg,Regular,19-10-2023,475,20,Pune
+Peppercorn,Organic,20-10-2023,480,22,Pune
+Cumin,Local,20-10-2023,485,24,Pune
+Coriander Seeds,Regular,20-10-2023,490,26,Pune
+Fenugreek,Organic,20-10-2023,495,28,Pune
+Mustard Seeds,Local,20-10-2023,500,20,Pune
+Sesame Seeds,Regular,21-10-2023,505,22,Pune
+Poppy Seeds,Organic,21-10-2023,510,24,Pune
+Sunflower Seeds,Local,21-10-2023,515,26,Pune
+Pumpkin Seeds,Regular,21-10-2023,520,28,Pune
+Flax Seeds,Organic,21-10-2023,525,20,Pune
+Chia Seeds,Local,22-10-2023,530,22,Pune
+Quinoa,Regular,22-10-2023,535,24,Pune
+Lentils,Organic,22-10-2023,540,26,Pune
+Chickpeas,Local,22-10-2023,545,28,Pune
+Black Beans,Regular,22-10-2023,550,20,Pune
+Kidney Beans,Organic,23-10-2023,555,22,Pune
+Soybeans,Local,23-10-2023,560,24,Pune
+Peanuts,Regular,23-10-2023,565,26,Pune
+Hazelnuts,Organic,23-10-2023,570,28,Pune
+Pistachios,Local,23-10-2023,575,20,Pune
+Macadamia Nuts,Regular,24-10-2023,580,22,Pune
+Pecans,Organic,24-10-2023,585,24,Pune
+Brazil Nuts,Local,24-10-2023,590,26,Pune
+Chestnuts,Regular,24-10-2023,595,28,Pune

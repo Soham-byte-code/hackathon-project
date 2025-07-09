@@ -1,0 +1,101 @@
+supplier_id,supplier_name,commodity,available_quantity_kg,price_per_unit,distance_from_store_km,supply_region,transport_mode
+P1001,Vruksha Farms,Onion,1381,12,9,Pune,Tempo
+P1002,Krishi Organic,Tomato,1934,26,16,Pune,Bike
+P1003,Annapurna Agro,Cabbage,1151,12,20,Pune,Truck
+P1004,Green Basket,Cabbage,543,16,30,Pune,Electric Van
+P1005,Vruksha Farms,Fenugreek,1008,27,30,Pune,Tempo
+P1006,Nature’s Cart,Cauliflower,1624,15,25,Pune,Truck
+P1007,EcoVeg Pune,Spinach,1547,14,43,Pune,Tempo
+P1008,Vruksha Farms,Fenugreek,586,28,40,Pune,EV Van
+P1009,Annapurna Agro,Coriander,1749,28,37,Pune,Tempo
+P1010,Green Basket,Spinach,863,23,34,Pune,Electric Van
+P1011,Krishi Organic,Tomato,1772,25,41,Pune,Mini Truck
+P1012,Annapurna Agro,Spinach,1059,17,27,Pune,Bike
+P1013,Annapurna Agro,Cauliflower,1163,14,14,Pune,Bike
+P1014,EcoVeg Pune,Spinach,1354,20,9,Pune,Electric Van
+P1015,Shivneri Naturals,Tomato,802,16,40,Pune,Tempo
+P1016,Green Basket,Cauliflower,1769,28,38,Pune,Truck
+P1017,FreshLeaf Agro,Carrot,1934,25,35,Pune,Tempo
+P1018,Annapurna Agro,Cabbage,546,14,14,Pune,Electric Van
+P1019,Shivneri Naturals,Cabbage,1571,12,23,Pune,Bike
+P1020,FreshLeaf Agro,Potato,1263,12,36,Pune,Tempo
+P1021,Green Basket,Carrot,888,14,5,Pune,Bike
+P1022,Sahyadri Farms,Carrot,1328,29,9,Pune,Truck
+P1023,Nature’s Cart,Spinach,950,21,49,Pune,Bike
+P1024,Shivneri Naturals,Cabbage,737,14,8,Pune,Bike
+P1025,Urban Roots,Tomato,1271,19,20,Pune,Mini Truck
+P1026,Sahyadri Farms,Brinjal,1040,25,28,Pune,Mini Truck
+P1027,Nature’s Cart,Brinjal,872,29,20,Pune,EV Van
+P1028,EcoVeg Pune,Cauliflower,550,26,6,Pune,Mini Truck
+P1029,Vruksha Farms,Cabbage,1838,13,32,Pune,Bike
+P1030,Krishi Organic,Cabbage,1721,21,36,Pune,Electric Van
+P1031,Urban Roots,Brinjal,662,13,31,Pune,Bike
+P1032,EcoVeg Pune,Cabbage,543,28,24,Pune,Electric Van
+P1033,Green Basket,Spinach,745,19,28,Pune,Electric Van
+P1034,EcoVeg Pune,Coriander,1023,12,16,Pune,Mini Truck
+P1035,Vruksha Farms,Onion,1416,20,39,Pune,Tempo
+P1036,Green Basket,Carrot,1995,22,37,Pune,Truck
+P1037,Urban Roots,Potato,1280,27,37,Pune,Mini Truck
+P1038,Vruksha Farms,Cauliflower,401,18,47,Pune,Mini Truck
+P1039,FreshLeaf Agro,Coriander,1296,21,41,Pune,Tempo
+P1040,Krishi Organic,Brinjal,1727,14,16,Pune,Truck
+P1041,Urban Roots,Carrot,653,29,7,Pune,Bike
+P1042,FreshLeaf Agro,Cabbage,852,24,5,Pune,EV Van
+P1043,Nature’s Cart,Potato,1460,18,37,Pune,EV Van
+P1044,Urban Roots,Cabbage,1583,15,44,Pune,Bike
+P1045,Nature’s Cart,Tomato,1414,24,14,Pune,Mini Truck
+P1046,Green Basket,Tomato,408,12,47,Pune,Truck
+P1047,FreshLeaf Agro,Potato,1656,19,48,Pune,Mini Truck
+P1048,Krishi Organic,Potato,1522,25,33,Pune,Electric Van
+P1049,Vruksha Farms,Brinjal,1215,27,17,Pune,Mini Truck
+P1050,Annapurna Agro,Potato,607,25,16,Pune,Mini Truck
+P1051,EcoVeg Pune,Spinach,1554,23,35,Pune,Bike
+P1052,Sahyadri Farms,Cabbage,803,26,6,Pune,Bike
+P1053,Krishi Organic,Coriander,551,13,39,Pune,Bike
+P1054,FreshLeaf Agro,Fenugreek,453,13,27,Pune,EV Van
+P1055,Annapurna Agro,Potato,1543,28,21,Pune,Electric Van
+P1056,Krishi Organic,Cauliflower,1027,21,30,Pune,Bike
+P1057,FreshLeaf Agro,Tomato,986,17,12,Pune,Truck
+P1058,Shivneri Naturals,Spinach,1843,26,33,Pune,EV Van
+P1059,Shivneri Naturals,Carrot,1845,22,30,Pune,Tempo
+P1060,Nature’s Cart,Fenugreek,503,16,14,Pune,Truck
+P1061,Krishi Organic,Coriander,653,12,30,Pune,Truck
+P1062,Shivneri Naturals,Fenugreek,1650,19,38,Pune,Bike
+P1063,FreshLeaf Agro,Potato,1535,23,45,Pune,Tempo
+P1064,Nature’s Cart,Brinjal,909,23,11,Pune,Tempo
+P1065,FreshLeaf Agro,Tomato,1896,16,8,Pune,EV Van
+P1066,Nature’s Cart,Tomato,498,18,49,Pune,Tempo
+P1067,Krishi Organic,Carrot,552,15,15,Pune,Electric Van
+P1068,Annapurna Agro,Brinjal,1313,17,33,Pune,Bike
+P1069,Vruksha Farms,Cabbage,1277,24,40,Pune,Tempo
+P1070,Urban Roots,Onion,737,26,29,Pune,EV Van
+P1071,Annapurna Agro,Spinach,1221,14,25,Pune,Electric Van
+P1072,Green Basket,Tomato,1586,19,40,Pune,Mini Truck
+P1073,FreshLeaf Agro,Cauliflower,1356,27,14,Pune,Mini Truck
+P1074,Green Basket,Tomato,560,24,41,Pune,Electric Van
+P1075,Annapurna Agro,Fenugreek,1200,29,13,Pune,EV Van
+P1076,Nature’s Cart,Tomato,797,21,28,Pune,Electric Van
+P1077,Urban Roots,Tomato,1700,28,39,Pune,Bike
+P1078,Urban Roots,Onion,1215,16,39,Pune,Bike
+P1079,Sahyadri Farms,Onion,1927,20,40,Pune,Mini Truck
+P1080,Urban Roots,Coriander,1815,23,22,Pune,Tempo
+P1081,Vruksha Farms,Cabbage,1558,12,43,Pune,EV Van
+P1082,Urban Roots,Cauliflower,1618,12,36,Pune,Mini Truck
+P1083,Annapurna Agro,Tomato,800,26,28,Pune,Tempo
+P1084,Sahyadri Farms,Tomato,1039,13,27,Pune,Tempo
+P1085,Annapurna Agro,Spinach,1456,27,36,Pune,Bike
+P1086,Annapurna Agro,Onion,1087,19,41,Pune,Truck
+P1087,EcoVeg Pune,Cauliflower,859,24,16,Pune,Truck
+P1088,Sahyadri Farms,Carrot,1354,12,17,Pune,Electric Van
+P1089,Annapurna Agro,Coriander,869,27,27,Pune,Bike
+P1090,EcoVeg Pune,Cabbage,1798,18,29,Pune,Tempo
+P1091,EcoVeg Pune,Brinjal,1445,16,39,Pune,EV Van
+P1092,Sahyadri Farms,Cabbage,1149,14,45,Pune,Truck
+P1093,Green Basket,Fenugreek,437,23,34,Pune,Tempo
+P1094,Nature’s Cart,Tomato,629,27,21,Pune,Truck
+P1095,Vruksha Farms,Coriander,1788,16,24,Pune,Truck
+P1096,Nature’s Cart,Fenugreek,962,25,29,Pune,Truck
+P1097,Urban Roots,Cauliflower,837,16,26,Pune,EV Van
+P1098,Vruksha Farms,Brinjal,1706,26,17,Pune,Bike
+P1099,Urban Roots,Onion,426,28,23,Pune,EV Van
+P1100,Annapurna Agro,Coriander,625,25,40,Pune,Mini Truck

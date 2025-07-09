@@ -1,0 +1,101 @@
+supplier_id,supplier_name,commodity,distance_km,fuel_cost_per_km,co2_per_km,spoilage_rate_per_km,location
+P1001,Vruksha Farms,Onion,9,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1002,Krishi Organic,Tomato,16,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1003,Annapurna Agro,Cabbage,20,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1004,Green Basket,Cabbage,30,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1005,Vruksha Farms,Fenugreek,30,10,0.22,0.016666666666666666,Unknown
+P1006,Nature's Cart,Cauliflower,25,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1007,EcoVeg Pune,Spinach,43,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1008,Vruksha Farms,Fenugreek,40,12,0.27,0.0075,Unknown
+P1009,Annapurna Agro,Coriander,37,10,0.22,0.016666666666666666,Unknown
+P1010,Green Basket,Spinach,34,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1011,Krishi Organic,Tomato,41,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1012,Annapurna Agro,Spinach,27,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1013,Annapurna Agro,Cauliflower,14,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1014,EcoVeg Pune,Spinach,9,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1015,Shivneri Naturals,Tomato,40,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1016,Green Basket,Cauliflower,38,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1017,FreshLeaf Agro,Carrot,35,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1018,Annapurna Agro,Cabbage,14,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1019,Shivneri Naturals,Cabbage,23,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1020,FreshLeaf Agro,Potato,36,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1021,Green Basket,Carrot,5,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1022,Sahyadri Farms,Carrot,9,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1023,Nature's Cart,Spinach,49,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1024,Shivneri Naturals,Cabbage,8,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1025,Urban Roots,Tomato,20,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1026,Sahyadri Farms,Brinjal,28,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1027,Nature's Cart,Brinjal,20,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1028,EcoVeg Pune,Cauliflower,6,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1029,Vruksha Farms,Cabbage,32,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1030,Krishi Organic,Cabbage,36,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1031,Urban Roots,Brinjal,31,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1032,EcoVeg Pune,Cabbage,24,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1033,Green Basket,Spinach,28,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1034,EcoVeg Pune,Coriander,16,12,0.27,0.0075,Unknown
+P1035,Vruksha Farms,Onion,39,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1036,Green Basket,Carrot,37,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1037,Urban Roots,Potato,37,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1038,Vruksha Farms,Cauliflower,47,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1039,FreshLeaf Agro,Coriander,41,10,0.22,0.016666666666666666,Unknown
+P1040,Krishi Organic,Brinjal,16,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1041,Urban Roots,Carrot,7,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1042,FreshLeaf Agro,Cabbage,5,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1043,Nature's Cart,Potato,37,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1044,Urban Roots,Cabbage,44,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1045,Nature's Cart,Tomato,14,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1046,Green Basket,Tomato,47,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1047,FreshLeaf Agro,Potato,48,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1048,Krishi Organic,Potato,33,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1049,Vruksha Farms,Brinjal,17,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1050,Annapurna Agro,Potato,16,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1051,EcoVeg Pune,Spinach,35,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1052,Sahyadri Farms,Cabbage,6,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1053,Krishi Organic,Coriander,39,2,0.05,0.04,Unknown
+P1054,FreshLeaf Agro,Fenugreek,27,12,0.27,0.0075,Unknown
+P1055,Annapurna Agro,Potato,21,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1056,Krishi Organic,Cauliflower,30,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1057,FreshLeaf Agro,Tomato,12,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1058,Shivneri Naturals,Spinach,33,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1059,Shivneri Naturals,Carrot,30,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1060,Nature's Cart,Fenugreek,14,12,0.27,0.0075,Unknown
+P1061,Krishi Organic,Coriander,30,12,0.27,0.0075,Unknown
+P1062,Shivneri Naturals,Fenugreek,38,2,0.05,0.04,Unknown
+P1063,FreshLeaf Agro,Potato,45,14,0.31,0.0022222222222222222,"Indapur (18.3000°N, 75.2500°E)"
+P1064,Nature's Cart,Brinjal,11,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1065,FreshLeaf Agro,Tomato,8,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1066,Nature's Cart,Tomato,49,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1067,Krishi Organic,Carrot,15,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1068,Annapurna Agro,Brinjal,33,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1069,Vruksha Farms,Cabbage,40,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1070,Urban Roots,Onion,29,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1071,Annapurna Agro,Spinach,25,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1072,Green Basket,Tomato,40,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1073,FreshLeaf Agro,Cauliflower,14,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1074,Green Basket,Tomato,41,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1075,Annapurna Agro,Fenugreek,13,12,0.27,0.0075,Unknown
+P1076,Nature's Cart,Tomato,28,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1077,Urban Roots,Tomato,39,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1078,Urban Roots,Onion,39,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1079,Sahyadri Farms,Onion,40,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1080,Urban Roots,Coriander,22,10,0.22,0.016666666666666666,Unknown
+P1081,Vruksha Farms,Cabbage,43,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1082,Urban Roots,Cauliflower,36,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1083,Annapurna Agro,Tomato,28,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1084,Sahyadri Farms,Tomato,27,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1085,Annapurna Agro,Spinach,36,5,0.0,0.16666666666666666,Pune Rural (Local) (Local farms)
+P1086,Annapurna Agro,Onion,41,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1087,EcoVeg Pune,Cauliflower,16,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1088,Sahyadri Farms,Carrot,17,8,0.15,0.0075,"Wagholi (18.5821°N, 73.9775°E)"
+P1089,Annapurna Agro,Coriander,27,2,0.05,0.04,Unknown
+P1090,EcoVeg Pune,Cabbage,29,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1091,EcoVeg Pune,Brinjal,39,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1092,Sahyadri Farms,Cabbage,45,9,0.18,0.036000000000000004,"Pimpri (18.6167°N, 73.8000°E)"
+P1093,Green Basket,Fenugreek,34,10,0.22,0.016666666666666666,Unknown
+P1094,Nature's Cart,Tomato,21,12,0.27,0.017142857142857144,"Uruli Devachi (18.4862°N, 74.1325°E → 18.5204°N, 73.8567°E)"
+P1095,Vruksha Farms,Coriander,24,12,0.27,0.0075,Unknown
+P1096,Nature's Cart,Fenugreek,29,12,0.27,0.0075,Unknown
+P1097,Urban Roots,Cauliflower,26,9,0.18,0.02857142857142857,"Shivapur (18.4497°N, 73.8503°E)"
+P1098,Vruksha Farms,Brinjal,17,9,0.18,0.02666666666666667,"Manjari Budruk (18.4497°N, 74.0253°E → Market)"
+P1099,Urban Roots,Onion,23,14,0.31,0.004,"Nashik (via Sinnar) (19.9975°N, 73.7898°E)"
+P1100,Annapurna Agro,Coriander,40,12,0.27,0.0075,Unknown
