@@ -4,6 +4,19 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
+# === Simple Password Protection ===
+def check_password():
+    correct_password = "Rait@123"  # You can change this to whatever you want
+    password = st.text_input("🔒 Enter Password to Access", type="password")
+    if password == "":
+        st.stop()
+    elif password != correct_password:
+        st.error("❌ Incorrect password. Please try again.")
+        st.stop()
+
+check_password()  # Call this before everything else
+
+
 # === Configuration ===
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 st.markdown("""
