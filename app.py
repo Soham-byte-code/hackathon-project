@@ -121,27 +121,29 @@ if st.button("🚀 Get AI Decision"):
 
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
-        <strong>Commodity:</strong> {best['commodity']}<br>
-        <strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
-        <strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
-        <strong>Requested Qty:</strong> {qty_needed} kg<br>
-        <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
-        <strong>Total Cost:</strong> ₹{total_cost}<br>
-        <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
-        <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
-        <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-        <strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
-        <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
-        <strong>Override Applied:</strong> {override}<br>
-        <strong>AI Decision:</strong> {decision}<br>
-        <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
-        <strong>Current Vehicle:</strong> {current_mode}<br>
-        <strong>Recommended Vehicle:</strong> {best_mode}<br>
-        <strong>Emissions (Switched):</strong> {round(best_emission, 2)} kg<br>
-        <strong>Route:</strong> {route}<br>
-        <strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
-        <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
-        </div>""", unsafe_allow_html=True)
+       st.markdown(f"""<div class='report-text'>
+<strong>Commodity:</strong> {best['commodity']}<br>
+<strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
+<strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
+<strong>Requested Qty:</strong> {qty_needed} kg<br>
+<strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
+<strong style='color: green;'>💰 Total Cost:</strong> <strong style='color: green;'>₹{total_cost}</strong><br>
+<strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
+<strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
+<strong>CO₂ (Central):</strong> {central_emissions} kg<br>
+<strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
+<strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
+<strong>Override Applied:</strong> {override}<br>
+<strong>AI Decision:</strong> {decision}<br>
+<strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
+<strong>Current Vehicle:</strong> {current_mode}<br>
+<strong>Recommended Vehicle:</strong> {best_mode}<br>
+<strong>Emissions (Switched):</strong> {round(best_emission, 2)} kg<br>
+<strong>Route:</strong> {route}<br>
+<strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
+<strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+</div>""", unsafe_allow_html=True)
+
 
         if st.button("🛒 Place Order"):
             st.balloons()
