@@ -4,10 +4,10 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
-# Set up page
+# Set page settings
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 
-# Styling
+# Style
 st.markdown("""
     <style>
     html, body, [class*="css"] {
@@ -32,7 +32,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Load Data
+# Load data
 @st.cache_data
 def load_data():
     suppliers = pd.read_excel("cleaned_supplier_data.xlsx")
@@ -44,38 +44,18 @@ def load_data():
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
-# Realistic fuel price and mileage
-petrol_price = 106.31  # Pune
-vehicle_mileage = 15   # Tempo
-fuel_cost_per_km = round(petrol_price / vehicle_mileage, 2)  # ₹7.09/km
-
-# Spoilage rate by commodity type
-spoilage_mapping = {
-    'Spinach': 0.005,
-    'Onion': 0.002,
-    'Tomato': 0.002,
-    'Cauliflower': 0.001,
-    'Potato': 0.001,
-    'Almonds': 0.0002,
-    'Cabbage': 0.001,
-    'Fenugreek': 0.001,
-    'Beans': 0.001,
-    'Lettuce': 0.005
-}
-
-# Preprocess supplier data
+# Merge & clean data
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
-suppliers = suppliers.merge(emissions[['supplier_id', 'co2_per_km']], on='supplier_id', how='left')
-suppliers.fillna({'co2_per_km': 0.15, 'distance_from_inventory_km': 50}, inplace=True)
-suppliers['fuel_cost_per_km'] = fuel_cost_per_km
+suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
+suppliers.fillna({'fuel_cost_per_km': 4.5, 'co2_per_km': 0.12, 'spoilage_rate_per_km': 0.0008, 'distance_from_inventory_km': 50}, inplace=True)
+
+# Recalculate cost/emission/spoilage
 suppliers['transport_cost'] = suppliers['distance_from_inventory_km'] * suppliers['fuel_cost_per_km']
-suppliers['spoilage_rate_per_km'] = suppliers['commodity'].map(spoilage_mapping).fillna(0.001)
-suppliers['spoilage_kg'] = suppliers['distance_from_inventory_km'] * suppliers['spoilage_rate_per_km'] * suppliers['available_quantity_kg']
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
 suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
-suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg'] + suppliers['spoilage_kg']
+suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg']
 
-# Train AI model
+# AI model
 np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
@@ -91,11 +71,11 @@ st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo
 st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
 st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
+# Inputs
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = st.text_input("📍 Your Shop Location", placeholder="e.g. Wagholi, Pune")
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
 
-# Get AI Decision
 if st.button("🚀 Get AI Decision"):
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
@@ -106,8 +86,9 @@ if st.button("🚀 Get AI Decision"):
             alt = matched.loc[matched['emissions_kg'].idxmin()]
             if alt['emissions_kg'] < best['emissions_kg'] * 0.8:
                 best = alt
-                st.info("♻️ Switched to lower emission supplier.")
+                st.info("♻️ Switched to supplier with lower CO₂ emissions.")
 
+        # Central estimation
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         central_emissions = round(150 * 0.15, 2)
 
@@ -128,7 +109,10 @@ if st.button("🚀 Get AI Decision"):
         current_emission = dist * vehicle_emissions.get(current_mode, 0.15)
         best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
         best_emission = dist * vehicle_emissions[best_mode]
-        spoilage_pct = round((best['spoilage_kg'] / best['available_quantity_kg']) * 100, 2)
+
+        spoilage_perc = best['spoilage_rate_per_km']
+        spoilage_kg = round(qty_needed * spoilage_perc * dist, 2)
+        spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
         travel_time = round(dist / 30, 2)
         route = f"{best.get('supply_region', 'Unknown')} → {location or 'Inventory'}"
         override = False
@@ -136,7 +120,7 @@ if st.button("🚀 Get AI Decision"):
             decision = "✅ Source Locally (Overridden by Sustainability)"
             override = True
 
-        total_cost = qty_needed * best['price_per_unit']
+        total_cost = round(qty_needed * best['price_per_unit'], 2)
 
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
@@ -149,7 +133,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
         <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-        <strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
+        <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
         <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
         <strong>Override Applied:</strong> {override}<br>
         <strong>AI Decision:</strong> {decision}<br>
@@ -162,17 +146,15 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-        # Order button
         if st.button("🛒 Place Order"):
             st.balloons()
             st.markdown(f"""
             <div style='text-align: center; padding: 30px; background-color: #e9f8e5; border-radius: 12px;'>
                 <h3>✅ Order Placed Successfully!</h3>
-                <p>You have placed an order for <strong>{qty_needed} kg of {best['commodity']}</strong>.</p>
-                <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
-                <p><strong>Delivery Route:</strong> {route}</p>
-                <p><strong>Total Cost:</strong> ₹{total_cost}</p>
-                <p><strong>ETA:</strong> {travel_time} hours</p>
-                <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
+                <p>You have ordered <strong>{qty_needed} kg of {best['commodity']}</strong> from <strong>{best['supplier_name']}</strong> (ID: {best['supplier_id']})</p>
+                <p>📍 <strong>Route:</strong> {route}</p>
+                <p>💸 <strong>Total Cost:</strong> ₹{total_cost}</p>
+                <p>⏱️ <strong>Estimated Time:</strong> {travel_time} hrs</p>
+                <p style='color: green; font-weight: bold;'>Thanks for using Walmart FreshRoute AI 🌿</p>
             </div>
             """, unsafe_allow_html=True)
