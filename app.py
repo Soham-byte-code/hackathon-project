@@ -96,7 +96,7 @@ st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allo
 st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
-location = "Shanivar Peth"  # 🧷 Constant Location
+location = "Shanivar Peth"
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
 
 # === Decision Button ===
@@ -112,11 +112,9 @@ if st.button("🚀 Get AI Decision"):
                 best = alt
                 st.info("♻️ Switched to lower CO₂ supplier.")
 
-        # Central comparison
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
 
-        # AI Prediction
         ai_input = pd.DataFrame([{
             'modal_price': best['price_per_unit'],
             'distance_km': best['distance_from_inventory_km'],
@@ -133,21 +131,18 @@ if st.button("🚀 Get AI Decision"):
         current_mode = best.get('transport_mode', 'Tempo')
         current_emission = dist * vehicle_emissions.get(current_mode, 0.15)
         best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
-        best_emission = dist * vehicle_emissions[best_mode]
 
-        # Spoilage with Realistic Rate
         spoilage_rate = REALISTIC_SPOILAGE_RATES.get(commodity.lower(), REALISTIC_SPOILAGE_RATES['default'])
         spoilage_kg = round(dist * spoilage_rate * qty_needed, 2)
         spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
 
         travel_time = round(dist / 30, 2)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
+        final_cost = round(total_cost + best['transport_cost'], 2)
         route = f"{best.get('supply_region', 'Unknown')} → {location}"
 
-        override = False
         if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
             decision = "✅ Source Locally (Overridden by Sustainability)"
-            override = True
 
         # === Final Report ===
         st.success("📦 AI Decision Generated")
@@ -159,16 +154,15 @@ if st.button("🚀 Get AI Decision"):
         <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
         <strong>Total Cost:</strong> ₹{total_cost}<br>
         <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
+        <strong>Final Cost:</strong> ₹{final_cost}<br>
         <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
         <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
         <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
-        <strong>Override Applied:</strong> {override}<br>
         <strong>AI Decision:</strong> {decision}<br>
         <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
         <strong>Current Vehicle:</strong> {current_mode}<br>
         <strong>Recommended Vehicle:</strong> {best_mode}<br>
-        <strong>Emissions (Switched):</strong> {round(best_emission, 2)} kg<br>
         <strong>Route:</strong> {route}<br>
         <strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
@@ -183,7 +177,7 @@ if st.button("🚀 Get AI Decision"):
                 <p>You have placed an order for <strong>{qty_needed} kg of {best['commodity']}</strong>.</p>
                 <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
                 <p><strong>Delivery Route:</strong> {route}</p>
-                <p><strong>Total Cost:</strong> ₹{total_cost}</p>
+                <p><strong>Final Cost:</strong> ₹{final_cost}</p>
                 <p><strong>ETA:</strong> {travel_time} hours</p>
                 <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
             </div>
