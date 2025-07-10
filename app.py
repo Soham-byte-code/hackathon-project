@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
+# === Page Config ===
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 
 # === Styling ===
@@ -46,12 +47,13 @@ suppliers, emissions, distance_df, inventory, demand = load_data()
 # === Prepare Data ===
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
-suppliers.fillna({'fuel_cost_per_km': 4.5, 'co2_per_km': 0.1, 'spoilage_rate_per_km': 0.0005, 'distance_from_inventory_km': 50}, inplace=True)
+suppliers.fillna({'fuel_cost_per_km': 5, 'co2_per_km': 0.15, 'spoilage_rate_per_km': 0.001, 'distance_from_inventory_km': 50}, inplace=True)
 
 suppliers['transport_cost'] = suppliers['distance_from_inventory_km'] * suppliers['fuel_cost_per_km']
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
+suppliers['spoilage_kg'] = suppliers['distance_from_inventory_km'] * suppliers['spoilage_rate_per_km'] * suppliers['available_quantity_kg']
 suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
-suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg']
+suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg'] + suppliers['spoilage_kg']
 
 # === Train AI Model ===
 np.random.seed(42)
@@ -108,24 +110,22 @@ if st.button("🚀 Get AI Decision"):
         dist = best['distance_from_inventory_km']
         vehicle_emissions = {'EV Van': 0.03, 'Bike': 0.02, 'Tempo': 0.1, 'Mini Truck': 0.12, 'Truck': 0.18}
         current_mode = best.get('transport_mode', 'Tempo')
-        current_emission = dist * vehicle_emissions.get(current_mode, 0.1)
+        current_emission = dist * vehicle_emissions.get(current_mode, 0.15)
         best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
         best_emission = dist * vehicle_emissions[best_mode]
 
         # Extra metrics
-        spoilage_rate_per_km = best.get('spoilage_rate_per_km', 0.001)
-        spoilage_kg = dist * spoilage_rate_per_km * qty_needed  # FIXED to use requested quantity
-        spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
+        spoilage_pct = round((best['spoilage_kg'] / best['available_quantity_kg']) * 100, 2)
         travel_time = round(dist / 30, 2)
         route = f"{best.get('supply_region', 'Unknown')} → {location or 'Inventory'}"
         override = False
-        if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions and spoilage_pct < 10:
+        if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
             decision = "✅ Source Locally (Overridden by Sustainability)"
             override = True
 
         total_cost = qty_needed * best['price_per_unit']
 
-        # === Output ===
+        # === Decision Report ===
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
         <strong>Commodity:</strong> {best['commodity']}<br>
@@ -137,7 +137,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
         <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-        <strong>Spoilage:</strong> {round(spoilage_kg, 2)} kg ({spoilage_pct}%)<br>
+        <strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
         <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
         <strong>Override Applied:</strong> {override}<br>
         <strong>AI Decision:</strong> {decision}<br>
@@ -150,6 +150,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
+        # === Place Order Button ===
         if st.button("🛒 Place Order"):
             st.balloons()
             st.markdown(f"""
