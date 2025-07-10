@@ -4,10 +4,9 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
-# === Streamlit Page Setup ===
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 
-# === CSS Styling ===
+# === Styling ===
 st.markdown("""
     <style>
     html, body, [class*="css"] {
@@ -44,21 +43,10 @@ def load_data():
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
-# === Preprocess Supplier Data ===
+# === Prepare Data ===
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
-
-# Real-world values
-PETROL_PRICE = 106  # ₹/liter
-MILEAGE_KMPL = 30
-real_fuel_cost = round(PETROL_PRICE / MILEAGE_KMPL, 2)  # ₹3.53/km
-
-suppliers.fillna({
-    'fuel_cost_per_km': real_fuel_cost,
-    'co2_per_km': 0.15,
-    'spoilage_rate_per_km': 0.001,
-    'distance_from_inventory_km': 50
-}, inplace=True)
+suppliers.fillna({'fuel_cost_per_km': 4.5, 'co2_per_km': 0.1, 'spoilage_rate_per_km': 0.0005, 'distance_from_inventory_km': 50}, inplace=True)
 
 suppliers['transport_cost'] = suppliers['distance_from_inventory_km'] * suppliers['fuel_cost_per_km']
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
@@ -77,16 +65,17 @@ features = ['modal_price', 'distance_km', 'transport_cost', 'local_price', 'cent
 model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[features], demand['decision'])
 
-# === Streamlit UI ===
+# === UI Header ===
 st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=160)
 st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
 st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
+# === Inputs ===
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = st.text_input("📍 Your Shop Location", placeholder="e.g. Wagholi, Pune")
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
 
-# === AI DECISION BUTTON ===
+# === Decision Button ===
 if st.button("🚀 Get AI Decision"):
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
@@ -97,12 +86,13 @@ if st.button("🚀 Get AI Decision"):
             alt = matched.loc[matched['emissions_kg'].idxmin()]
             if alt['emissions_kg'] < best['emissions_kg'] * 0.8:
                 best = alt
-                st.info("♻️ Switched to lower CO₂ supplier.")
+                st.info("♻️ Switched to supplier with lower CO₂ emissions.")
 
-        # AI Input
+        # Simulate central supplier
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         central_emissions = round(150 * 0.15, 2)
 
+        # AI Prediction
         ai_input = pd.DataFrame([{
             'modal_price': best['price_per_unit'],
             'distance_km': best['distance_from_inventory_km'],
@@ -110,7 +100,6 @@ if st.button("🚀 Get AI Decision"):
             'local_price': best['price_per_unit'],
             'central_price': central_price
         }])
-
         prediction = model.predict(ai_input)[0]
         confidence = model.predict_proba(ai_input)[0][prediction]
         decision = "✅ Source Locally" if prediction == 1 else "🚛 Use Central Warehouse"
@@ -119,23 +108,24 @@ if st.button("🚀 Get AI Decision"):
         dist = best['distance_from_inventory_km']
         vehicle_emissions = {'EV Van': 0.03, 'Bike': 0.02, 'Tempo': 0.1, 'Mini Truck': 0.12, 'Truck': 0.18}
         current_mode = best.get('transport_mode', 'Tempo')
-        current_emission = dist * vehicle_emissions.get(current_mode, 0.15)
+        current_emission = dist * vehicle_emissions.get(current_mode, 0.1)
         best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
         best_emission = dist * vehicle_emissions[best_mode]
 
-        # Final metrics
+        # Extra metrics
+        spoilage_rate_per_km = best.get('spoilage_rate_per_km', 0.001)
+        spoilage_kg = dist * spoilage_rate_per_km * qty_needed  # FIXED to use requested quantity
+        spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
         travel_time = round(dist / 30, 2)
-        spoilage_pct = round((best['spoilage_rate_per_km'] * dist * qty_needed) / qty_needed * 100, 2)
-        spoilage_kg = round(best['spoilage_rate_per_km'] * dist * qty_needed, 2)
         route = f"{best.get('supply_region', 'Unknown')} → {location or 'Inventory'}"
         override = False
         if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions and spoilage_pct < 10:
             decision = "✅ Source Locally (Overridden by Sustainability)"
             override = True
 
-        total_cost = round(qty_needed * best['price_per_unit'], 2)
+        total_cost = qty_needed * best['price_per_unit']
 
-        # === REPORT ===
+        # === Output ===
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
         <strong>Commodity:</strong> {best['commodity']}<br>
@@ -147,7 +137,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
         <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-        <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
+        <strong>Spoilage:</strong> {round(spoilage_kg, 2)} kg ({spoilage_pct}%)<br>
         <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
         <strong>Override Applied:</strong> {override}<br>
         <strong>AI Decision:</strong> {decision}<br>
@@ -167,7 +157,7 @@ if st.button("🚀 Get AI Decision"):
                 <h3>✅ Order Placed Successfully!</h3>
                 <p>You have placed an order for <strong>{qty_needed} kg of {best['commodity']}</strong>.</p>
                 <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
-                <p><strong>Route:</strong> {route}</p>
+                <p><strong>Delivery Route:</strong> {route}</p>
                 <p><strong>Total Cost:</strong> ₹{total_cost}</p>
                 <p><strong>ETA:</strong> {travel_time} hours</p>
                 <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
