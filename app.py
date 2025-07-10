@@ -6,10 +6,10 @@ from datetime import datetime
 
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 
-# Custom styling
+# Custom Styling
 st.markdown("""
     <style>
-    html, body, [class*="css"]  {
+    html, body, [class*="css"] {
         font-family: 'Segoe UI', sans-serif;
         color: #222 !important;
     }
@@ -43,7 +43,7 @@ def load_data():
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
-# Data Prep
+# Prepare supplier data
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
 suppliers.fillna({'fuel_cost_per_km': 5, 'co2_per_km': 0.15, 'spoilage_rate_per_km': 0.001, 'distance_from_inventory_km': 50}, inplace=True)
@@ -54,7 +54,7 @@ suppliers['spoilage_kg'] = suppliers['distance_from_inventory_km'] * suppliers['
 suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
 suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg'] + suppliers['spoilage_kg']
 
-# AI Model
+# Train Random Forest model
 np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
@@ -66,7 +66,7 @@ features = ['modal_price', 'distance_km', 'transport_cost', 'local_price', 'cent
 model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[features], demand['decision'])
 
-# Streamlit UI
+# UI
 st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=150)
 st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
 st.markdown("<p>Smarter sourcing, fresher produce, lower carbon footprint 🌍</p>", unsafe_allow_html=True)
@@ -76,13 +76,14 @@ commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity
 location = st.text_input("📍 Your Shop Location", placeholder="e.g. Wagholi, Pune")
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
 
-# Decision Button
+# Get AI Decision
 if st.button("🚀 Get AI Decision"):
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
     else:
         best = matched.loc[matched['local_score'].idxmin()]
+
         if best['emissions_kg'] > 10:
             low_em = matched.loc[matched['emissions_kg'].idxmin()]
             if low_em['emissions_kg'] < best['emissions_kg'] * 0.8:
@@ -121,30 +122,29 @@ if st.button("🚀 Get AI Decision"):
 
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
-       st.markdown(f"""<div class='report-text'>
-<strong>Commodity:</strong> {best['commodity']}<br>
-<strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
-<strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
-<strong>Requested Qty:</strong> {qty_needed} kg<br>
-<strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
-<strong style='color: green;'>💰 Total Cost:</strong> <strong style='color: green;'>₹{total_cost}</strong><br>
-<strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
-<strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
-<strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-<strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
-<strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
-<strong>Override Applied:</strong> {override}<br>
-<strong>AI Decision:</strong> {decision}<br>
-<strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
-<strong>Current Vehicle:</strong> {current_mode}<br>
-<strong>Recommended Vehicle:</strong> {best_mode}<br>
-<strong>Emissions (Switched):</strong> {round(best_emission, 2)} kg<br>
-<strong>Route:</strong> {route}<br>
-<strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
-<strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
-</div>""", unsafe_allow_html=True)
+        <strong>Commodity:</strong> {best['commodity']}<br>
+        <strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
+        <strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
+        <strong>Requested Qty:</strong> {qty_needed} kg<br>
+        <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
+        <strong style='color: green;'>💰 Total Cost:</strong> <strong style='color: green;'>₹{total_cost}</strong><br>
+        <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
+        <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
+        <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
+        <strong>Spoilage:</strong> {round(best['spoilage_kg'], 2)} kg ({spoilage_pct}%)<br>
+        <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
+        <strong>Override Applied:</strong> {override}<br>
+        <strong>AI Decision:</strong> {decision}<br>
+        <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
+        <strong>Current Vehicle:</strong> {current_mode}<br>
+        <strong>Recommended Vehicle:</strong> {best_mode}<br>
+        <strong>Emissions (Switched):</strong> {round(best_emission, 2)} kg<br>
+        <strong>Route:</strong> {route}<br>
+        <strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
+        <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+        </div>""", unsafe_allow_html=True)
 
-
+        # Place Order Button
         if st.button("🛒 Place Order"):
             st.balloons()
             st.markdown(f"""
@@ -158,5 +158,3 @@ if st.button("🚀 Get AI Decision"):
                 <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
             </div>
             """, unsafe_allow_html=True)
-
-
