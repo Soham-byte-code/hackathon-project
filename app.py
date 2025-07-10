@@ -46,6 +46,7 @@ suppliers, emissions, distance_df, inventory, demand = load_data()
 PETROL_PRICE = 106  # Rs/litre
 VEHICLE_MILEAGE = 15  # km/litre
 CO2_PER_KM_DEFAULT = 0.15
+
 REALISTIC_SPOILAGE_RATES = {
     "tomato": 0.01,
     "onion": 0.003,
@@ -65,7 +66,12 @@ REALISTIC_SPOILAGE_RATES = {
 # === Data Preprocessing ===
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
-suppliers.fillna({'fuel_cost_per_km': 0, 'co2_per_km': CO2_PER_KM_DEFAULT, 'spoilage_rate_per_km': 0.001, 'distance_from_inventory_km': 50}, inplace=True)
+suppliers.fillna({
+    'fuel_cost_per_km': 0,
+    'co2_per_km': CO2_PER_KM_DEFAULT,
+    'spoilage_rate_per_km': 0.001,
+    'distance_from_inventory_km': 50
+}, inplace=True)
 
 suppliers['transport_cost'] = (suppliers['distance_from_inventory_km'] / VEHICLE_MILEAGE) * PETROL_PRICE
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
@@ -90,10 +96,10 @@ st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allo
 st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
-location = st.text_input("📍 Your Shop Location", placeholder="e.g. Wagholi, Pune")
+location = "Shanivar Peth"  # 🧷 Constant Location
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
 
-# === AI Decision Button ===
+# === Decision Button ===
 if st.button("🚀 Get AI Decision"):
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
@@ -110,7 +116,7 @@ if st.button("🚀 Get AI Decision"):
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
 
-        # Prediction
+        # AI Prediction
         ai_input = pd.DataFrame([{
             'modal_price': best['price_per_unit'],
             'distance_km': best['distance_from_inventory_km'],
@@ -129,14 +135,14 @@ if st.button("🚀 Get AI Decision"):
         best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
         best_emission = dist * vehicle_emissions[best_mode]
 
-        # 🛑 Updated spoilage using real data:
+        # Spoilage with Realistic Rate
         spoilage_rate = REALISTIC_SPOILAGE_RATES.get(commodity.lower(), REALISTIC_SPOILAGE_RATES['default'])
         spoilage_kg = round(dist * spoilage_rate * qty_needed, 2)
         spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
 
         travel_time = round(dist / 30, 2)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
-        route = f"{best.get('supply_region', 'Unknown')} → {location or 'Inventory'}"
+        route = f"{best.get('supply_region', 'Unknown')} → {location}"
 
         override = False
         if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
@@ -168,7 +174,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-        # Place Order
+        # === Place Order ===
         if st.button("🛒 Place Order"):
             st.balloons()
             st.markdown(f"""
