@@ -9,11 +9,11 @@ from datetime import datetime
 # ========================
 def check_password():
     correct_password = "Rait@123"
-    password = st.text_input("🔒 Enter Password to Access", type="password")
+    password = st.text_input("\U0001f512 Enter Password to Access", type="password")
     if password == "":
         st.stop()
     elif password != correct_password:
-        st.error("❌ Incorrect password. Please try again.")
+        st.error("\u274c Incorrect password. Please try again.")
         st.stop()
 
 check_password()
@@ -21,7 +21,7 @@ check_password()
 # ========================
 # Page Setup
 # ========================
-st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
+st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="\U0001f33f", layout="centered")
 st.markdown("""
 <style>
 html, body, [class*="css"] { font-family: 'Segoe UI', sans-serif; color: #222 !important; }
@@ -112,18 +112,21 @@ model.fit(demand[['modal_price','distance_km','transport_cost','local_price','ce
 # ========================
 st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=160)
 st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
-st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
+st.markdown("Smarter sourcing, fresher produce, lower carbon footprint \U0001f33f")
 
-commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
+commodity = st.selectbox("\U0001f966 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = "Shanivar Peth"
-qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=50)
+qty_needed = st.number_input("\U0001f522 Quantity Needed (in kg)", min_value=1, max_value=50, value=50)
 
-# Prepare session state
+# Session state setup
 if "order_placed" not in st.session_state:
     st.session_state.order_placed = False
+if "decision_ready" not in st.session_state:
+    st.session_state.decision_ready = False
 
-if st.button("🚀 Get AI Decision"):
+if st.button("\U0001f680 Get AI Decision"):
     st.session_state.order_placed = False
+    st.session_state.decision_ready = False
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
@@ -152,9 +155,9 @@ if st.button("🚀 Get AI Decision"):
         }])
         pred = model.predict(ai_input)[0]
         conf = model.predict_proba(ai_input)[0][pred]
-        decision = "✅ Source Locally" if pred == 1 else "🚛 Use Central Warehouse"
+        decision = "\u2705 Source Locally" if pred == 1 else "\U0001f69b Use Central Warehouse"
         if pred == 0 and best['price_per_unit'] < central_price and emissions_local < central_emissions:
-            decision = "✅ Source Locally (Overridden by Sustainability)"
+            decision = "\u2705 Source Locally (Overridden by Sustainability)"
 
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
@@ -163,7 +166,13 @@ if st.button("🚀 Get AI Decision"):
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         eta = round(dist / 30, 2)
 
-        st.success("📦 AI Decision Generated")
+        st.session_state.route = route
+        st.session_state.final_cost = final_cost
+        st.session_state.eta = eta
+        st.session_state.supplier_name = supplier_name
+        st.session_state.supplier_id = best['supplier_id']
+
+        st.success("\U0001f4e6 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
 <strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
@@ -184,8 +193,11 @@ if st.button("🚀 Get AI Decision"):
 <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
 </div>""", unsafe_allow_html=True)
 
-        if st.button("🛒 Place Order"):
-            st.session_state.order_placed = True
+        st.session_state.decision_ready = True
+
+if st.session_state.decision_ready and not st.session_state.order_placed:
+    if st.button("\U0001f6d2 Place Order"):
+        st.session_state.order_placed = True
 
 if st.session_state.order_placed:
     st.balloons()
@@ -195,10 +207,10 @@ if st.session_state.order_placed:
     ✅ Order Placed Successfully!
   </div>
   <p style='font-size:18px;'>🛒 You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-  <p><strong>🏢 Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})</p>
-  <p><strong>🚚 Route:</strong> {route}</p>
-  <p><strong>💰 Final Cost:</strong> ₹{final_cost}</p>
-  <p><strong>⏳ ETA:</strong> {eta} hours</p>
+  <p><strong>🏢 Supplier:</strong> {st.session_state.supplier_name} (ID: {st.session_state.supplier_id})</p>
+  <p><strong>🚚 Route:</strong> {st.session_state.route}</p>
+  <p><strong>💰 Final Cost:</strong> ₹{st.session_state.final_cost}</p>
+  <p><strong>⏳ ETA:</strong> {st.session_state.eta} hours</p>
   <hr style='border:none; border-top:1px solid #444; margin:20px 0;'>
   <p style='color:#8bc34a; font-weight:600; font-size:16px;'>🌱 Thanks for choosing sustainability with <span style="color:#4caf50;">Walmart FreshRoute AI</span></p>
 </div>""", unsafe_allow_html=True)
