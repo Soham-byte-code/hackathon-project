@@ -137,9 +137,14 @@ model.fit(demand[['modal_price','distance_km','transport_cost','local_price','ce
 # ========================
 # UI & Logic
 # ========================
-st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=160)
-st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
-st.markdown("Smarter sourcing, fresher produce, lower carbon footprint \U0001f33f")
+st.markdown("""
+<div style='text-align: center;'>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png" width="160">
+    <h2 style='color:#0071ce; margin-top: 10px;'>Walmart FreshRoute AI</h2>
+    <p style='font-size:18px;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>
+</div>
+""", unsafe_allow_html=True)
+
 
 commodity = st.selectbox("\U0001f966 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = "Shanivar Peth"
