@@ -226,14 +226,28 @@ if st.session_state.decision_done:
 if st.session_state.order_placed:
     st.balloons()
     st.markdown(f"""
-    <div style='padding: 35px; background-color: #f0fff0; border-radius: 15px; border: 2px solid #b2d8b2; text-align: left; font-size: 18px; line-height: 1.8;'>
-        <h2 style='text-align: center; color: green;'>✅ Order Placed Successfully</h2>
-        <hr>
-        <strong>🛒 Ordered:</strong> {qty_needed} kg of <strong>{commodity}</strong><br>
-        <strong>🏢 Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
-        <strong>🚚 Route:</strong> {route}<br>
-        <strong>💰 Final Cost:</strong> ₹{final_cost}<br>
-        <strong>⏳ ETA:</strong> {travel_time} hours<br><br>
-        <div style='text-align:center; color: darkgreen; font-weight: bold;'>🌱 Thank you for choosing Walmart FreshRoute AI for smarter, sustainable sourcing!</div>
+    <div style='
+        background-color: #f6fff4;
+        border-left: 8px solid #3cb371;
+        border-radius: 10px;
+        padding: 25px 35px;
+        font-size: 18px;
+        color: #1e3d2f;
+        line-height: 1.8;
+        font-family: "Segoe UI", sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    '>
+        <h2 style='color: #2e7d32; text-align: center;'>✅ Order Placed Successfully</h2>
+        <hr style='border: none; height: 1px; background-color: #ddd;'>
+
+        <p><strong>🛒 Ordered:</strong> {qty_needed} kg of <strong>{commodity}</strong></p>
+        <p><strong>🏢 Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
+        <p><strong>🚚 Route:</strong> {route}</p>
+        <p><strong>💰 Final Cost:</strong> ₹{final_cost}</p>
+        <p><strong>⏳ ETA:</strong> {travel_time} hours</p>
+
+        <div style='text-align: center; margin-top: 20px; font-weight: bold; color: #2e7d32;'>
+            🌿 Thanks for choosing Walmart FreshRoute AI for sustainable sourcing!
+        </div>
     </div>
     """, unsafe_allow_html=True)
