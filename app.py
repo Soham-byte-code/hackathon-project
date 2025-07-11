@@ -137,6 +137,12 @@ model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[features], demand['decision'])
 
 # ========================
+# Session state
+# ========================
+if "order_placed" not in st.session_state:
+    st.session_state.order_placed = False
+
+# ========================
 # UI
 # ========================
 st.markdown("""
@@ -148,10 +154,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
-location = "Shanivar Peth"
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=50)
 
 if st.button("🚀 Get AI Decision"):
+    st.session_state.order_placed = False
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
@@ -192,7 +198,7 @@ if st.button("🚀 Get AI Decision"):
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         travel_time = round(dist / 30, 2)
 
-        # Output
+        # Show Report
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
         <strong>Commodity:</strong> {commodity}<br>
@@ -215,8 +221,12 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-       if st.session_state.order_placed:
-           st.markdown(f"""
+        if st.button("🛒 Place Order"):
+            st.session_state.order_placed = True
+            st.balloons()
+
+if st.session_state.order_placed:
+    st.markdown(f"""
     <div style='
         text-align: center;
         padding: 40px 30px;
@@ -234,7 +244,7 @@ if st.button("🚀 Get AI Decision"):
             ✅ <span style='margin-left: 10px;'>Order Placed Successfully!</span>
         </div>
         <p style='font-size: 18px;'>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-        <p><strong>Supplier:</strong> {best['supplier_name']} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
+        <p><strong>Supplier:</strong> {supplier_name} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
         <p><strong>Delivery Route:</strong> {route}</p>
         <p><strong>Final Cost:</strong> ₹{final_cost}</p>
         <p><strong>ETA:</strong> {travel_time} hours</p>
