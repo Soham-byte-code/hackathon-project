@@ -82,15 +82,15 @@ VEHICLE_EMISSIONS = {
 }
 
 def assign_vehicle(weight_kg):
-    if weight_kg <= 20:
+    if weight_kg <= 5:
+        return "EV Van"
+    elif weight_kg <= 20:
         return "Bike"
-    elif weight_kg <= 100:
+    elif weight_kg <= 50:
         return "Tempo"
-    elif weight_kg <= 300:
-        return "Mini Truck"
     else:
-        return "Truck"
-
+        return "Not Supported"
+ 
 # ========================
 # Preprocessing
 # ========================
