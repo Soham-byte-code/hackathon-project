@@ -63,9 +63,14 @@ suppliers, emissions, distance_df, inventory, demand = load_data()
 # ========================
 # Constants
 # ========================
-PETROL_PRICE = 106
-VEHICLE_MILEAGE = 25
-CO2_PER_KM_DEFAULT = 0.15
+VEHICLE_MILEAGE_BY_TYPE = {
+    "EV scooter": 50,     # Assuming 50 km/litre-equivalent cost
+    "Bike": 45,
+    "Tempo": 20,
+    "Mini Truck": 15,
+    "Truck": 8
+}
+
 
 REALISTIC_SPOILAGE_RATES = {
     "tomato": 0.01, "onion": 0.003, "potato": 0.004,
@@ -108,7 +113,10 @@ suppliers.fillna({
     'distance_from_inventory_km': 50
 }, inplace=True)
 
-suppliers['transport_cost'] = (suppliers['distance_from_inventory_km'] / VEHICLE_MILEAGE) * PETROL_PRICE
+# dynamically calculate transport cost based on vehicle
+vehicle_mileage = VEHICLE_MILEAGE_BY_TYPE.get(current_mode, 25)
+transport_cost = round((dist / vehicle_mileage) * PETROL_PRICE, 2)
+
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
 
 # Shelf life logic
@@ -200,7 +208,8 @@ if st.session_state.decision_done:
 
         travel_time = round(dist / 30, 2)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
-        final_cost = round(total_cost + best['transport_cost'], 2)
+        final_cost = round(total_cost + transport_cost, 2)
+
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
         # Manual override if needed:
@@ -221,7 +230,8 @@ if st.session_state.decision_done:
         <strong>Requested Qty:</strong> {qty_needed} kg<br>
         <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
         <strong>Total Cost:</strong> ₹{total_cost}<br>
-        <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
+        <strong>Transport Cost:</strong> ₹{transport_cost}<br>
+
         <strong>Final Cost:</strong> ₹{final_cost}<br>
         <strong>CO₂ (Local):</strong> {current_emission} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
