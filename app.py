@@ -57,10 +57,6 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# Centered title and subtitle
-st.markdown("<h1 style='text-align: center; color: #0071ce;'>Walmart FreshRoute AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size:18px;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>", unsafe_allow_html=True)
-
 
 # ========================
 # Load Data
