@@ -200,7 +200,6 @@ if st.session_state.decision_ready and not st.session_state.order_placed:
         st.session_state.order_placed = True
 
 if st.session_state.order_placed:
-    st.balloons()
     st.markdown(f"""
 <div style='text-align: center; padding: 40px 30px; background-color: #1e1e1e; border-radius: 16px; color: #f0f0f0; font-family: "Segoe UI"; line-height:1.6; max-width:600px; margin:0 auto; border:1px solid #333;'>
   <div style='font-size:24px; font-weight:600; margin-bottom:16px; color:#00e676;'>
