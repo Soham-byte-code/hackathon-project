@@ -79,13 +79,17 @@ HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry frui
 VEHICLE_EMISSIONS = {
     "EV scooter": 0.03,
     "Bike": 0.02,
-    "Tempo": 0.1
+    "Tempo": 0.1,
+    "Mini Truck": 0.12,
+    "Truck": 0.18
 }
 
 VEHICLE_MILEAGE_BY_TYPE = {
     "EV scooter": 60,
     "Bike": 40,
-    "Tempo": 25
+    "Tempo": 20,
+    "Mini Truck": 15,
+    "Truck": 8
 }
 
 def assign_vehicle(weight_kg):
@@ -96,7 +100,7 @@ def assign_vehicle(weight_kg):
     elif weight_kg <= 50:
         return "Tempo"
     else:
-        return "Not Supported"
+        return "Truck"
 
 # ========================
 # Preprocessing
@@ -125,102 +129,85 @@ model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[features], demand['decision'])
 
 # ========================
-# UI Section
+# UI
 # ========================
-st.markdown("""
-<div style='text-align: center; margin-top: 20px; margin-bottom: 30px;'>
-    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png' width='160'/>
-    <h2 style='color:#0071ce; margin-top: 10px;'>Walmart FreshRoute AI</h2>
-    <p style='font-size: 16px; color: #ccc;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>
-</div>
-""", unsafe_allow_html=True)
+st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=160)
+st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
+st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=50)
 
-# ========================
-# Session State
-# ========================
-if "decision_done" not in st.session_state:
-    st.session_state.decision_done = False
 if "order_placed" not in st.session_state:
     st.session_state.order_placed = False
 
 if st.button("🚀 Get AI Decision"):
-    st.session_state.decision_done = True
-    st.session_state.order_placed = False
+    matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()].copy()
+    matched['vehicle'] = assign_vehicle(qty_needed)
+    matched['mileage'] = matched['vehicle'].map(VEHICLE_MILEAGE_BY_TYPE).fillna(25)
+    matched['emission_factor'] = matched['vehicle'].map(VEHICLE_EMISSIONS).fillna(CO2_PER_KM_DEFAULT)
 
-if st.session_state.decision_done:
-    matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
-    if matched.empty:
-        st.error("No suppliers found.")
-    else:
-        best = matched.loc[matched['local_score'].idxmin()]
-        if best['emissions_kg'] > 10:
-            alt = matched.loc[matched['emissions_kg'].idxmin()]
-            if alt['emissions_kg'] < best['emissions_kg'] * 0.8:
-                best = alt
-                st.info("♻️ Switched to lower CO₂ supplier.")
+    matched['transport_cost'] = (matched['distance_from_inventory_km'] / matched['mileage']) * PETROL_PRICE
+    matched['emissions_kg'] = matched['distance_from_inventory_km'] * matched['emission_factor']
+    matched['local_score'] = matched['price_per_unit'] + matched['transport_cost'] + matched['emissions_kg']
 
-        dist = best['distance_from_inventory_km']
-        vehicle = assign_vehicle(qty_needed)
-        mileage = VEHICLE_MILEAGE_BY_TYPE.get(vehicle, 25)
-        transport_cost = round((dist / mileage) * PETROL_PRICE, 2)
-        emission = round(dist * VEHICLE_EMISSIONS.get(vehicle, CO2_PER_KM_DEFAULT), 2)
+    best = matched.loc[matched['local_score'].idxmin()]
+    central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
+    central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
 
-        spoilage_rate = REALISTIC_SPOILAGE_RATES.get(commodity.lower(), REALISTIC_SPOILAGE_RATES["default"])
-        spoilage_kg = round(dist * spoilage_rate * qty_needed, 2)
-        spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
-        shelf_life = 90 if commodity.lower() in HIGH_SHELF_COMMODITIES else max(1, 20 - (dist // 5))
+    ai_input = pd.DataFrame([{
+        'modal_price': best['price_per_unit'],
+        'distance_km': best['distance_from_inventory_km'],
+        'transport_cost': best['transport_cost'],
+        'local_price': best['price_per_unit'],
+        'central_price': central_price
+    }])
 
-        total_cost = round(best['price_per_unit'] * qty_needed, 2)
-        final_cost = round(total_cost + transport_cost, 2)
-        central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
+    prediction = model.predict(ai_input)[0]
+    confidence = model.predict_proba(ai_input)[0][prediction]
+    decision = "✅ Source Locally" if prediction == 1 else "🚛 Use Central Warehouse"
 
-        supplier_name = best['supplier_name']
-        supply_area = best.get('supply_region', 'Wagholi')
-        if supply_area.lower() == "pune":
-            supply_area = "Wagholi"
-        route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
-        travel_time = round(dist / 30, 2)
+    dist = best['distance_from_inventory_km']
+    current_emission = round(best['emissions_kg'], 2)
 
-        ai_input = pd.DataFrame([{
-            'modal_price': best['price_per_unit'],
-            'distance_km': dist,
-            'transport_cost': transport_cost,
-            'local_price': best['price_per_unit'],
-            'central_price': best['price_per_unit'] * 2.0
-        }])
-        prediction = model.predict(ai_input)[0]
-        confidence = model.predict_proba(ai_input)[0][prediction]
+    spoilage_rate = REALISTIC_SPOILAGE_RATES.get(commodity.lower(), REALISTIC_SPOILAGE_RATES['default'])
+    spoilage_kg = round(dist * spoilage_rate * qty_needed, 2)
+    spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
+    shelf_life = 90 if commodity.lower() in HIGH_SHELF_COMMODITIES else max(1, 20 - (dist // 5))
+    travel_time = round(dist / 30, 2)
+    total_cost = round(qty_needed * best['price_per_unit'], 2)
+    final_cost = round(total_cost + best['transport_cost'], 2)
 
-        decision = "✅ Source Locally" if prediction == 1 else "🚛 Use Central Warehouse"
-        if prediction == 0 and best['price_per_unit'] < best['price_per_unit'] * 2.0 and emission < central_emissions:
-            decision = "✅ Source Locally (Overridden by Sustainability)"
+    supply_area = best.get('supply_region', 'Wagholi')
+    if supply_area.lower() == "pune":
+        supply_area = "Wagholi"
+    route = f"{best['supplier_name']} → {supply_area} (Pune) → Shanivar Peth (Pune)"
 
-        st.success("📦 AI Decision Generated")
-        st.markdown(f"""<div class='report-text'>
-        <strong>Commodity:</strong> {commodity}<br>
-        <strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
-        <strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
-        <strong>Requested Qty:</strong> {qty_needed} kg<br>
-        <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
-        <strong>Total Cost:</strong> ₹{total_cost}<br>
-        <strong>Transport Cost:</strong> ₹{transport_cost}<br>
-        <strong>Final Cost:</strong> ₹{final_cost}<br>
-        <strong>CO₂ (Local):</strong> {emission} kg<br>
-        <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
-        <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
-        <strong>Shelf Life:</strong> {shelf_life} days<br>
-        <strong>AI Decision:</strong> {decision}<br>
-        <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
-        <strong>Vehicle:</strong> {vehicle}<br>
-        <strong>Route:</strong> {route}<br>
-        <strong>ETA:</strong> {travel_time} hrs<br>
-        </div>""", unsafe_allow_html=True)
+    if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
+        decision = "✅ Source Locally (Overridden by Sustainability)"
 
-        if st.button("🛒 Place Order"):
-            st.session_state.order_placed = True
+    st.success("📦 AI Decision Generated")
+    st.markdown(f"""<div class='report-text'>
+    <strong>Commodity:</strong> {commodity}<br>
+    <strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
+    <strong>Requested Qty:</strong> {qty_needed} kg<br>
+    <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
+    <strong>Total Cost:</strong> ₹{total_cost}<br>
+    <strong>Transport Cost:</strong> ₹{round(best['transport_cost'], 2)}<br>
+    <strong>Final Cost:</strong> ₹{final_cost}<br>
+    <strong>CO₂ (Local):</strong> {current_emission} kg<br>
+    <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
+    <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
+    <strong>Shelf Life:</strong> {shelf_life} days<br>
+    <strong>AI Decision:</strong> {decision}<br>
+    <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
+    <strong>Vehicle:</strong> {best['vehicle']}<br>
+    <strong>Route:</strong> {route}<br>
+    <strong>ETA:</strong> {travel_time} hrs<br>
+    </div>""", unsafe_allow_html=True)
+
+    if st.button("🛒 Place Order"):
+        st.session_state.order_placed = True
 
 if st.session_state.order_placed:
     st.markdown(f"""
@@ -241,7 +228,7 @@ if st.session_state.order_placed:
             ✅ <span style='margin-left: 10px;'>Order Placed Successfully!</span>
         </div>
         <p style='font-size: 18px;'>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-        <p><strong>Supplier:</strong> {supplier_name} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
+        <p><strong>Supplier:</strong> {best['supplier_name']} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
         <p><strong>Delivery Route:</strong> {route}</p>
         <p><strong>Final Cost:</strong> ₹{final_cost}</p>
         <p><strong>ETA:</strong> {travel_time} hours</p>
