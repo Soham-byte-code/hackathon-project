@@ -216,32 +216,32 @@ if st.button("🚀 Get AI Decision"):
         </div>""", unsafe_allow_html=True)
 
         if st.button("🛒 Place Order"):
-            st.balloons()
-            st.markdown(f"""
-            <div style='
-                text-align: center;
-                padding: 40px 30px;
-                background-color: #1e1e1e;
-                border-radius: 16px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                color: #f0f0f0;
-                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.6;
-                max-width: 600px;
-                margin: 0 auto;
-                border: 1px solid #333;
-            '>
-                <div style='font-size: 24px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; color: #00e676;'>
-                    ✅ <span style='margin-left: 10px;'>Order Placed Successfully!</span>
-                </div>
-                <p style='font-size: 18px;'>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-                <p><strong>Supplier:</strong> {supplier_name} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
-                <p><strong>Delivery Route:</strong> {route}</p>
-                <p><strong>Final Cost:</strong> ₹{final_cost}</p>
-                <p><strong>ETA:</strong> {travel_time} hours</p>
-                <hr style='margin: 20px 0; border: none; border-top: 1px solid #444;'>
-                <p style='color: #8bc34a; font-weight: 600; font-size: 16px;'>
-                    🌱 Thanks for choosing sustainability with <span style="color: #4caf50;">Walmart FreshRoute AI</span>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
+   
+           st.markdown(f"""
+           <div style='
+        text-align: center;
+        padding: 40px 30px;
+        background-color: #1e1e1e;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        color: #f0f0f0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto;
+        border: 1px solid #333;
+    '>
+        <div style='font-size: 24px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; color: #00e676;'>
+            ✅ <span style='margin-left: 10px;'>Order Placed Successfully!</span>
+        </div>
+        <p style='font-size: 18px;'>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
+        <p><strong>Supplier:</strong> {supplier_name} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
+        <p><strong>Delivery Route:</strong> {route}</p>
+        <p><strong>Final Cost:</strong> ₹{final_cost}</p>
+        <p><strong>ETA:</strong> {travel_time} hours</p>
+        <hr style='margin: 20px 0; border: none; border-top: 1px solid #444;'>
+        <p style='color: #8bc34a; font-weight: 600; font-size: 16px;'>
+            🌱 Thanks for choosing sustainability with <span style="color: #4caf50;">Walmart FreshRoute AI</span>
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
