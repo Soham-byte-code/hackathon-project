@@ -215,10 +215,9 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-        if st.button("🛒 Place Order"):
-   
+       if st.session_state.order_placed:
            st.markdown(f"""
-           <div style='
+    <div style='
         text-align: center;
         padding: 40px 30px;
         background-color: #1e1e1e;
@@ -235,7 +234,7 @@ if st.button("🚀 Get AI Decision"):
             ✅ <span style='margin-left: 10px;'>Order Placed Successfully!</span>
         </div>
         <p style='font-size: 18px;'>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-        <p><strong>Supplier:</strong> {supplier_name} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
+        <p><strong>Supplier:</strong> {best['supplier_name']} <span style="color: #aaa;">(ID: {best['supplier_id']})</span></p>
         <p><strong>Delivery Route:</strong> {route}</p>
         <p><strong>Final Cost:</strong> ₹{final_cost}</p>
         <p><strong>ETA:</strong> {travel_time} hours</p>
