@@ -228,8 +228,8 @@ st.markdown(f"""<div class='report-text'>
 </div>""", unsafe_allow_html=True)
 
 
-        st.success("\U0001f4e6 AI Decision Generated")
-        st.markdown(f"""<div class='report-text'>
+st.success("\U0001f4e6 AI Decision Generated")
+]st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
 <strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
 <strong>Requested Qty:</strong> {qty_needed} kg<br>
