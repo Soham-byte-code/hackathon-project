@@ -22,7 +22,7 @@ check_password()
 # Page Setup
 # ========================
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
-st.markdown(\"""
+st.markdown("""
 <style>
 html, body, [class*="css"] {
     font-family: 'Segoe UI', sans-serif;
@@ -44,7 +44,7 @@ html, body, [class*="css"] {
     line-height: 1.8;
 }
 </style>
-\""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ========================
 # Load Data
@@ -78,17 +78,13 @@ HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry frui
 VEHICLE_EMISSIONS = {
     "EV scooter": 0.03,
     "Bike": 0.02,
-    "Tempo": 0.1,
-    "Mini Truck": 0.12,
-    "Truck": 0.18
+    "Tempo": 0.1
 }
 
 VEHICLE_MILEAGE_BY_TYPE = {
     "EV scooter": 60,
     "Bike": 40,
-    "Tempo": 20,
-    "Mini Truck": 15,
-    "Truck": 8
+    "Tempo": 20
 }
 
 def assign_vehicle(weight_kg):
@@ -144,7 +140,6 @@ if st.button("🚀 Get AI Decision"):
         st.error("No suppliers found.")
     else:
         best = matched.loc[matched['price_per_unit'].idxmin()]
-
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
 
@@ -201,6 +196,7 @@ if st.button("🚀 Get AI Decision"):
         <strong>ETA:</strong> {travel_time} hrs<br>
         </div>
         """, unsafe_allow_html=True)
+
         if st.button("🛒 Place Order"):
             st.success("✅ Order Placed Successfully!")
             st.markdown(f"""
@@ -213,3 +209,4 @@ if st.button("🚀 Get AI Decision"):
                 <div style='color: green; font-weight: bold; margin-top: 20px;'>🌿 Thanks for choosing Walmart FreshRoute AI for sustainable sourcing!</div>
             </div>
             """, unsafe_allow_html=True)
+
