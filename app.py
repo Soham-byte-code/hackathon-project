@@ -203,6 +203,30 @@ if st.button("\U0001f680 Get AI Decision"):
         st.session_state.eta = eta
         st.session_state.supplier_name = supplier_name
         st.session_state.supplier_id = best['supplier_id']
+        available_qty = best.get('available_quantity_kg', 'N/A')
+
+st.success("📦 AI Decision Generated")
+st.markdown(f"""<div class='report-text'>
+<strong>Commodity:</strong> {commodity}<br>
+<strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
+<strong>Available Qty:</strong> {available_qty} kg<br>
+<strong>Requested Qty:</strong> {qty_needed} kg<br>
+<strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
+<strong>Total Cost:</strong> ₹{total_cost}<br>
+<strong>Transport Cost:</strong> ₹{transport_cost}<br>
+<strong>Final Cost:</strong> ₹{final_cost}<br>
+<strong>CO₂ (Local):</strong> {emissions_local} kg<br>
+<strong>CO₂ (Central):</strong> {central_emissions} kg<br>
+<strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
+<strong>Shelf Life:</strong> {shelf_life} days<br>
+<strong>AI Decision:</strong> {decision}<br>
+<strong>Confidence:</strong> {round(conf*100,2)}%<br>
+<strong>Vehicle:</strong> {vehicle}<br>
+<strong>Route:</strong> {route}<br>
+<strong>ETA:</strong> {eta} hrs<br>
+<strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+</div>""", unsafe_allow_html=True)
+
 
         st.success("\U0001f4e6 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
