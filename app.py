@@ -205,7 +205,7 @@ if st.session_state.decision_done:
         supply_area = best.get('supply_region', 'Wagholi')
         # Manual override if needed:
         if supply_area.lower() == "pune":
-        supply_area = "Wagholi"
+           supply_area = "Wagholi"
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
 
 
