@@ -47,6 +47,41 @@ html, body, [class*="css"] {
 """, unsafe_allow_html=True)
 
 # ========================
+# Constants
+# ========================
+PETROL_PRICE = 106
+VEHICLE_MILEAGE = 25
+CO2_PER_KM_DEFAULT = 0.15
+
+REALISTIC_SPOILAGE_RATES = {
+    "tomato": 0.01, "onion": 0.003, "potato": 0.004,
+    "cabbage": 0.005, "spinach": 0.012, "cauliflower": 0.006,
+    "carrot": 0.002, "banana": 0.018, "mango": 0.02,
+    "grapes": 0.015, "almonds": 0.0005, "dry fruits": 0.0008,
+    "default": 0.007
+}
+
+HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry fruits", "grains", "nuts"]
+
+VEHICLE_EMISSIONS = {
+    "EV scooter": 0.03,
+    "Bike": 0.02,
+    "Tempo": 0.1,
+    "Mini Truck": 0.12,
+    "Truck": 0.18
+}
+
+def assign_vehicle(weight_kg):
+    if weight_kg <= 5:
+        return "EV scooter"
+    elif weight_kg <= 20:
+        return "Bike"
+    elif weight_kg <= 50:
+        return "Tempo"
+    else:
+        return "Not Supported"
+
+# ========================
 # Load Data
 # ========================
 @st.cache_data
@@ -57,6 +92,9 @@ def load_data():
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     return suppliers, emissions, distance_df, inventory, demand
+
+# Now you can continue your AI logic...
+
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
