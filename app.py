@@ -21,13 +21,28 @@ check_password()
 # ========================
 # Page Setup
 # ========================
-st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="\U0001f33f", layout="centered")
+st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 st.markdown("""
 <style>
-html, body, [class*="css"] { font-family: 'Segoe UI', sans-serif; color: #222 !important; }
-.stButton>button { background-color: #ffc220; color: black; font-weight: bold; border-radius: 6px; padding: 10px 25px; }
-.stButton>button:hover { background-color: #e6ac00; color: white; }
-.report-text { font-size: 16px; line-height: 1.8; }
+html, body, [class*="css"] {
+    font-family: 'Segoe UI', sans-serif;
+    color: #222 !important;
+}
+.stButton>button {
+    background-color: #ffc220;
+    color: black;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 10px 25px;
+}
+.stButton>button:hover {
+    background-color: #e6ac00;
+    color: white;
+}
+.report-text {
+    font-size: 16px;
+    line-height: 1.8;
+}
 </style>
 """, unsafe_allow_html=True)
 
