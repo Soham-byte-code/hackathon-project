@@ -64,7 +64,7 @@ suppliers, emissions, distance_df, inventory, demand = load_data()
 # Constants
 # ========================
 PETROL_PRICE = 106
-VEHICLE_MILEAGE = 15
+VEHICLE_MILEAGE = 25
 CO2_PER_KM_DEFAULT = 0.15
 
 REALISTIC_SPOILAGE_RATES = {
