@@ -53,7 +53,7 @@ html, body, [class*="css"] {
 def load_data():
     suppliers = pd.read_excel("cleaned_supplier_data.xlsx")
     emissions = pd.read_csv("transport_route_emissions.csv")
-    distance_df = pd.read_csv("extended_distance_dataset.csv")  # REPLACED
+    distance_df = pd.read_csv("extended_distance_dataset.csv")
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     return suppliers, emissions, distance_df, inventory, demand
@@ -97,17 +97,12 @@ def assign_vehicle(weight_kg):
 # ==============================
 # Preprocessing
 # ==============================
-# Merge distance and contextual attributes
 context_cols = [
     'supplier_id', 'distance_from_inventory_km', 'road_type', 'traffic_condition',
     'avg_speed_kmph', 'fuel_efficiency_factor', 'weather_condition', 'region_type'
 ]
 suppliers = suppliers.merge(distance_df[context_cols], on='supplier_id', how='left')
-
-# Merge emissions
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
-
-# Fill missing values
 suppliers.fillna({
     'fuel_cost_per_km': 0,
     'co2_per_km': CO2_PER_KM_DEFAULT,
@@ -121,19 +116,25 @@ suppliers.fillna({
     'region_type': 'urban'
 }, inplace=True)
 
-# Adjust transport cost using efficiency factor
-suppliers['transport_cost'] = ((suppliers['distance_from_inventory_km'] / VEHICLE_MILEAGE)
-                               * PETROL_PRICE * suppliers['fuel_efficiency_factor'])
-
-# Adjust emissions
+suppliers['transport_cost'] = ((suppliers['distance_from_inventory_km'] / VEHICLE_MILEAGE) * PETROL_PRICE * suppliers['fuel_efficiency_factor'])
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
-
-# Estimate shelf life
 suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
 suppliers['shelf_life_days'] = suppliers.apply(
     lambda row: 90 if row['commodity'].lower() in HIGH_SHELF_COMMODITIES else row['shelf_life_days'],
     axis=1
 )
-
-# Local score combines cost and emissions
 suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg']
+
+# ==============================
+# Train Model
+# ==============================
+np.random.seed(42)
+demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
+demand['transport_cost'] = demand['distance_km'] * 4
+demand['central_price'] = demand['modal_price'] + demand['transport_cost']
+demand['local_price'] = np.random.randint(1000, 2500, size=len(demand))
+demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
+
+features = ['modal_price', 'distance_km', 'transport_cost', 'local_price', 'central_price']
+model = RandomForestClassifier(n_estimators=150, random_state=42)
+model.fit(demand[features], demand['decision'])
