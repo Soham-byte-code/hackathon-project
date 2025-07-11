@@ -215,8 +215,8 @@ if st.button("🚀 Get AI Decision"):
         <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-      if st.button("🛒 Place Order")
-            st.session_state.order_placed = True
+    if st.button("🛒 Place Order"):
+    st.session_state.order_placed = True
 
 if st.session_state.order_placed:
     st.markdown(f"""
