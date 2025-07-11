@@ -188,7 +188,8 @@ if st.button("🚀 Get AI Decision"):
         travel_time = round(dist / 30, 2)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
         final_cost = round(total_cost + best['transport_cost'], 2)
-        route = f"{best.get('supply_region', 'Unknown')} → {location}"
+        route = f"{best.get('supply_region', 'Unknown')} (Pune) → Shanivar Peth (Pune)"
+
 
         if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
             decision = "✅ Source Locally (Overridden by Sustainability)"
