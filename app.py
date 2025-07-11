@@ -78,8 +78,13 @@ REALISTIC_SPOILAGE_RATES = {
 HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry fruits", "grains", "nuts"]
 
 VEHICLE_EMISSIONS = {
-    "Bike": 0.02, "Tempo": 0.1, "Mini Truck": 0.12, "Truck": 0.18
+    "EV Van": 0.03,
+    "Bike": 0.02,
+    "Tempo": 0.1,
+    "Mini Truck": 0.12,
+    "Truck": 0.18
 }
+
 
 def assign_vehicle(weight_kg):
     if weight_kg <= 5:
