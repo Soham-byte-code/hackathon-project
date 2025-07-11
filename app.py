@@ -88,7 +88,7 @@ VEHICLE_EMISSIONS = {
 
 def assign_vehicle(weight_kg):
     if weight_kg <= 5:
-        return "EV Van"
+        return "EV scooter"
     elif weight_kg <= 20:
         return "Bike"
     elif weight_kg <= 50:
