@@ -132,9 +132,14 @@ model.fit(demand[features], demand['decision'])
 # ========================
 # UI
 # ========================
-st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png", width=160)
-st.markdown("<h2 style='color:#0071ce;'>Walmart FreshRoute AI</h2>", unsafe_allow_html=True)
-st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
+st.markdown("""
+<div style='text-align: center; margin-top: 20px; margin-bottom: 30px;'>
+    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png' width='160'/>
+    <h2 style='color:#0071ce; margin-top: 10px;'>Walmart FreshRoute AI</h2>
+    <p style='font-size: 16px; color: #ccc;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>
+</div>
+""", unsafe_allow_html=True)
+
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = "Shanivar Peth"
