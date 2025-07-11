@@ -53,7 +53,7 @@ html, body, [class*="css"] {
 def load_data():
     suppliers = pd.read_excel("cleaned_supplier_data.xlsx")
     emissions = pd.read_csv("transport_route_emissions.csv")
-    distance_df = pd.read_excel("extended_distance_dataset.csv")
+    distance_df = pd.read_excel("Distance Dataset.xlsx")
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     return suppliers, emissions, distance_df, inventory, demand
