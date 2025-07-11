@@ -226,23 +226,20 @@ if st.session_state.decision_done:
 if st.session_state.order_placed:
     st.balloons()
     st.markdown(f"""
-    <div style='padding: 35px; background-color: #f9fdfd; border-radius: 20px; border: 2px solid #cce3e3;
-                 font-family: "Segoe UI", sans-serif; font-size: 18px; color: #2c3e50;
-                 box-shadow: 0 4px 12px rgba(0,0,0,0.08); line-height: 1.8;'>
+    <div style='padding: 35px; background-color: #f8fff8; border-radius: 20px; border: 2px solid #c3e6cb; font-family: "Segoe UI", sans-serif; font-size: 18px; color: #2f4f2f; box-shadow: 0 4px 12px rgba(0,0,0,0.1); line-height: 1.8;'>
         
-        <h2 style='text-align: center; color: #007b83; margin-bottom: 10px;'>✅ Order Successfully Placed</h2>
-        <hr style='border: 1px solid #cce3e3;'>
+        <h2 style='text-align: center; color: #2e8b57; margin-bottom: 10px;'>✅ Order Successfully Placed</h2>
+        <hr style='border: 1px solid #c3e6cb;'>
+        
+        <p><strong>🛒 Ordered:</strong> <span style='color: #000;'>{qty_needed} kg</span> of <strong style='color: #000;'>{commodity}</strong></p>
+        <p><strong>🏢 Supplier:</strong> <span style='color: #000;'>{best['supplier_name']}</span> (ID: {best['supplier_id']})</p>
+        <p><strong>🚚 Route:</strong> <span style='color: #000;'>{route}</span></p>
+        <p><strong>💰 Final Cost:</strong> <span style='color: #000;'>₹{final_cost}</span></p>
+        <p><strong>⏳ ETA:</strong> <span style='color: #000;'>{travel_time} hours</span></p>
 
-        <p><strong>🛒 Ordered:</strong> <span style='color: #000;'>{qty_needed} kg</span> of <strong>{commodity}</strong></p>
-        <p><strong>🏢 Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
-        <p><strong>🚚 Route:</strong> {route}</p>
-        <p><strong>💰 Final Cost:</strong> ₹{final_cost}</p>
-        <p><strong>⏳ ETA:</strong> {travel_time} hours</p>
-
-        <div style='margin-top: 30px; text-align: center; font-size: 17px; font-weight: bold; color: #1e6f68;'>
-            🌱 Thank you for choosing <span style='color: #007b83;'>Walmart FreshRoute AI</span><br>
+        <div style='margin-top: 30px; text-align: center; font-size: 17px; font-weight: bold; color: #228B22;'>
+            🌱 Thank you for choosing <span style='color: #006400;'>Walmart FreshRoute AI</span> <br>
             for smarter and sustainable sourcing!
         </div>
     </div>
     """, unsafe_allow_html=True)
-
