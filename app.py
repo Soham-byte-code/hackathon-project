@@ -103,6 +103,12 @@ def assign_vehicle(weight_kg):
         return "Not Supported"
 
 # ========================
+# Session State Setup
+# ========================
+if "order_placed" not in st.session_state:
+    st.session_state.order_placed = False
+
+# ========================
 # Preprocessing
 # ========================
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
@@ -137,7 +143,7 @@ model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[features], demand['decision'])
 
 # ========================
-# UI Section
+# UI
 # ========================
 st.markdown("""
 <div style='text-align: center; margin-top: 20px; margin-bottom: 30px;'>
@@ -148,15 +154,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
-location = "Shanivar Peth"
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=50)
 
-if "order_placed" not in st.session_state:
-    st.session_state.order_placed = False
-
 if st.button("🚀 Get AI Decision"):
-    st.session_state.order_placed = False  # reset previous order state
-
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
@@ -185,7 +185,6 @@ if st.button("🚀 Get AI Decision"):
         }])
         prediction = model.predict(ai_input)[0]
         confidence = model.predict_proba(ai_input)[0][prediction]
-
         decision = "✅ Source Locally" if prediction == 1 else "🚛 Use Central Warehouse"
         if prediction == 0 and best['price_per_unit'] < central_price and emissions < central_emissions:
             decision = "✅ Source Locally (Overridden by Sustainability)"
@@ -197,7 +196,6 @@ if st.button("🚀 Get AI Decision"):
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         travel_time = round(dist / 30, 2)
 
-        # Show Decision
         st.success("📦 AI Decision Generated")
         st.markdown(f"""<div class='report-text'>
         <strong>Commodity:</strong> {commodity}<br>
@@ -222,7 +220,6 @@ if st.button("🚀 Get AI Decision"):
 
         if st.button("🛒 Place Order"):
             st.session_state.order_placed = True
-            st.balloons()
 
         if st.session_state.order_placed:
             st.markdown(f"""
@@ -236,7 +233,7 @@ if st.button("🚀 Get AI Decision"):
                 font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
                 line-height: 1.6;
                 max-width: 600px;
-                margin: 0 auto;
+                margin: 20px auto 0;
                 border: 1px solid #333;
             '>
                 <div style='font-size: 24px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; color: #00e676;'>
