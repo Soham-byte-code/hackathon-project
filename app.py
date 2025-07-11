@@ -203,8 +203,7 @@ if st.button("\U0001f680 Get AI Decision"):
         st.session_state.eta = eta
         st.session_state.supplier_name = supplier_name
         st.session_state.supplier_id = best['supplier_id']
-        available_qty = best.get('available_quantity_kg', 'N/A')
-
+       
 st.success("📦 AI Decision Generated")
 st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
