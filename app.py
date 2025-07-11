@@ -226,7 +226,7 @@ if st.session_state.decision_done:
 if st.session_state.order_placed:
     st.balloons()
     st.markdown(f"""
-    <div style='text-align: center; padding: 30px; background-color: #e9f8e5; border-radius: 12px;'>
+    <div style='text-align: center; padding: 30px; background-color: #e9f8e5; border-radius: 12px; color: #000000;'>
         <h3>✅ Order Placed Successfully!</h3>
         <p>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
         <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
