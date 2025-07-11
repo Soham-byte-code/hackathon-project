@@ -22,29 +22,45 @@ check_password()
 # Page Setup
 # ========================
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
+
 st.markdown("""
 <style>
 html, body, [class*="css"] {
     font-family: 'Segoe UI', sans-serif;
     color: #222 !important;
+    text-align: center;  /* Center align text globally */
 }
+
 .stButton>button {
     background-color: #ffc220;
     color: black;
     font-weight: bold;
     border-radius: 6px;
     padding: 10px 25px;
+    margin: 10px auto; /* Center the button */
+    display: block;
 }
+
 .stButton>button:hover {
     background-color: #e6ac00;
     color: white;
 }
+
 .report-text {
     font-size: 16px;
     line-height: 1.8;
+    text-align: left; /* Keep reports left aligned for readability */
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 700px;
 }
 </style>
 """, unsafe_allow_html=True)
+
+# Centered title and subtitle
+st.markdown("<h1 style='text-align: center; color: #0071ce;'>Walmart FreshRoute AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size:18px;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>", unsafe_allow_html=True)
+
 
 # ========================
 # Load Data
