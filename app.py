@@ -203,7 +203,7 @@ if st.session_state.decision_done:
         final_cost = round(total_cost + best['transport_cost'], 2)
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
-# Manual override if needed:
+        # Manual override if needed:
         if supply_area.lower() == "pune":
         supply_area = "Wagholi"
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
