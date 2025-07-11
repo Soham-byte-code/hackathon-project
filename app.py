@@ -218,7 +218,7 @@ if st.button("🚀 Get AI Decision"):
     if st.button("🛒 Place Order"):
     st.session_state.order_placed = True
 
-if  st.session_state.order_placed:
+ if st.session_state.order_placed:
     st.markdown(f"""
     <div style='
         text-align: center;
