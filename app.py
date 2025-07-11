@@ -6,40 +6,27 @@ from datetime import datetime
 
 # === Simple Password Protection ===
 def check_password():
-    correct_password = "Rait@123"  # You can change this to whatever you want
+    correct_password = "Rait@123"
     password = st.text_input("🔒 Enter Password to Access", type="password")
     if password == "":
         st.stop()
     elif password != correct_password:
-        st.error("❌ Incorrect password. Please try again.")
+        st.error("❌ Incorrect password.")
         st.stop()
 
-check_password()  # Call this before everything else
+check_password()
 
-
-# === Configuration ===
+# === Config ===
 st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
 st.markdown("""
 <style>
-html, body, [class*="css"] {
-    font-family: 'Segoe UI', sans-serif;
-    color: #222 !important;
-}
+html, body, [class*="css"] { font-family: 'Segoe UI', sans-serif; color: #222 !important; }
 .stButton>button {
-    background-color: #ffc220;
-    color: black;
-    font-weight: bold;
-    border-radius: 6px;
-    padding: 10px 25px;
+    background-color: #ffc220; color: black; font-weight: bold;
+    border-radius: 6px; padding: 10px 25px;
 }
-.stButton>button:hover {
-    background-color: #e6ac00;
-    color: white;
-}
-.report-text {
-    font-size: 16px;
-    line-height: 1.8;
-}
+.stButton>button:hover { background-color: #e6ac00; color: white; }
+.report-text { font-size: 16px; line-height: 1.8; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -56,25 +43,28 @@ def load_data():
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
 # === Constants ===
-PETROL_PRICE = 106  # Rs/litre
-VEHICLE_MILEAGE = 15  # km/litre
+PETROL_PRICE = 106
+VEHICLE_MILEAGE = 15
 CO2_PER_KM_DEFAULT = 0.15
-
-REALISTIC_SPOILAGE_RATES = {
-    "tomato": 0.01,
-    "onion": 0.003,
-    "potato": 0.004,
-    "cabbage": 0.005,
-    "spinach": 0.012,
-    "cauliflower": 0.006,
-    "carrot": 0.002,
-    "banana": 0.018,
-    "mango": 0.02,
-    "grapes": 0.015,
-    "almonds": 0.0005,
-    "dry fruits": 0.0008,
-    "default": 0.007
+FIXED_QTY = 50
+VEHICLE_EMISSIONS = {
+    'Bike': 0.02,
+    'Tempo': 0.1,
+    'Mini Truck': 0.12,
+    'Truck': 0.18
 }
+
+# Spoilage Rates
+REALISTIC_SPOILAGE_RATES = {
+    "tomato": 0.01, "onion": 0.003, "potato": 0.004, "cabbage": 0.005,
+    "spinach": 0.012, "cauliflower": 0.006, "carrot": 0.002,
+    "banana": 0.018, "mango": 0.02, "grapes": 0.015,
+    "almonds": 0.0005, "dry fruits": 0.0008, "default": 0.007
+}
+
+# Shelf Life Categories
+GRAINS_AND_NUTS = ["almonds", "dry fruits", "pulses", "rice", "wheat"]
+VEG_AND_FRUITS = ["tomato", "onion", "potato", "cabbage", "spinach", "banana", "mango", "grapes", "carrot", "cauliflower"]
 
 # === Data Preprocessing ===
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
@@ -88,7 +78,6 @@ suppliers.fillna({
 
 suppliers['transport_cost'] = (suppliers['distance_from_inventory_km'] / VEHICLE_MILEAGE) * PETROL_PRICE
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
-suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
 suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['transport_cost'] + suppliers['emissions_kg']
 
 # === Train AI Model ===
@@ -110,7 +99,8 @@ st.markdown("Smarter sourcing, fresher produce, lower carbon footprint 🌿")
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 location = "Shanivar Peth"
-qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=10000, value=50)
+qty_needed = FIXED_QTY
+st.markdown(f"🔢 Quantity Fixed at: **{qty_needed} kg**")
 
 # === Decision Button ===
 if st.button("🚀 Get AI Decision"):
@@ -140,22 +130,24 @@ if st.button("🚀 Get AI Decision"):
         decision = "✅ Source Locally" if prediction == 1 else "🚛 Use Central Warehouse"
 
         dist = best['distance_from_inventory_km']
-        vehicle_emissions = {'EV Van': 0.03, 'Bike': 0.02, 'Tempo': 0.1, 'Mini Truck': 0.12, 'Truck': 0.18}
-        current_mode = best.get('transport_mode', 'Tempo')
-        current_emission = dist * vehicle_emissions.get(current_mode, 0.15)
-        best_mode = min(vehicle_emissions, key=lambda m: dist * vehicle_emissions[m])
+        current_mode = 'Bike' if qty_needed <= 20 else 'Tempo' if qty_needed <= 60 else 'Mini Truck'
+        current_emission = dist * VEHICLE_EMISSIONS[current_mode]
 
         spoilage_rate = REALISTIC_SPOILAGE_RATES.get(commodity.lower(), REALISTIC_SPOILAGE_RATES['default'])
         spoilage_kg = round(dist * spoilage_rate * qty_needed, 2)
         spoilage_pct = round((spoilage_kg / qty_needed) * 100, 2)
 
+        if commodity.lower() in GRAINS_AND_NUTS:
+            shelf_life = 60
+        elif commodity.lower() in VEG_AND_FRUITS:
+            shelf_life = 10
+        else:
+            shelf_life = 20
+
         travel_time = round(dist / 30, 2)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
         final_cost = round(total_cost + best['transport_cost'], 2)
         route = f"{best.get('supply_region', 'Unknown')} → {location}"
-
-        if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
-            decision = "✅ Source Locally (Overridden by Sustainability)"
 
         # === Final Report ===
         st.success("📦 AI Decision Generated")
@@ -171,27 +163,25 @@ if st.button("🚀 Get AI Decision"):
         <strong>CO₂ (Local):</strong> {round(current_emission, 2)} kg<br>
         <strong>CO₂ (Central):</strong> {central_emissions} kg<br>
         <strong>Spoilage:</strong> {spoilage_kg} kg ({spoilage_pct}%)<br>
-        <strong>Shelf Life:</strong> {int(best['shelf_life_days'])} days<br>
+        <strong>Shelf Life:</strong> {shelf_life} days<br>
         <strong>AI Decision:</strong> {decision}<br>
         <strong>Confidence:</strong> {round(confidence * 100, 2)}%<br>
-        <strong>Current Vehicle:</strong> {current_mode}<br>
-        <strong>Recommended Vehicle:</strong> {best_mode}<br>
+        <strong>Transport Vehicle:</strong> {current_mode}<br>
         <strong>Route:</strong> {route}<br>
-        <strong>Estimated Travel Time:</strong> {travel_time} hrs<br>
-        <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
+        <strong>ETA:</strong> {travel_time} hrs<br>
+        <strong>Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
         </div>""", unsafe_allow_html=True)
 
-        # === Place Order ===
         if st.button("🛒 Place Order"):
             st.balloons()
             st.markdown(f"""
             <div style='text-align: center; padding: 30px; background-color: #e9f8e5; border-radius: 12px;'>
                 <h3>✅ Order Placed Successfully!</h3>
-                <p>You have placed an order for <strong>{qty_needed} kg of {best['commodity']}</strong>.</p>
-                <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
-                <p><strong>Delivery Route:</strong> {route}</p>
+                <p><strong>{qty_needed} kg of {best['commodity']}</strong> ordered from <strong>{best['supplier_name']}</strong> (ID: {best['supplier_id']}).</p>
+                <p><strong>Route:</strong> {route}</p>
                 <p><strong>Final Cost:</strong> ₹{final_cost}</p>
-                <p><strong>ETA:</strong> {travel_time} hours</p>
-                <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
+                <p><strong>ETA:</strong> {travel_time} hrs</p>
+                <p style='color: green; font-weight: bold;'>Thank you for choosing Walmart FreshRoute AI 🌿</p>
             </div>
             """, unsafe_allow_html=True)
+
