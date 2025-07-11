@@ -223,22 +223,21 @@ if st.session_state.decision_done:
         if st.button("🛒 Place Order"):
             st.session_state.order_placed = True
 
-if st.session_state.order_placed:
-    st.balloons()
-    st.markdown(f"""
+st.markdown(f"""
     <div style='
-        background-color: #f6fff4;
-        border-left: 8px solid #3cb371;
+        background-color: #f1fff4;
+        border-left: 6px solid #4CAF50;
         border-radius: 10px;
         padding: 25px 35px;
         font-size: 18px;
         color: #1e3d2f;
         line-height: 1.8;
         font-family: "Segoe UI", sans-serif;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        margin-top: 20px;
     '>
-        <h2 style='color: #2e7d32; text-align: center;'>✅ Order Placed Successfully</h2>
-        <hr style='border: none; height: 1px; background-color: #ddd;'>
+        <h3 style='color: #2e7d32; text-align: center;'>✅ Order Placed Successfully!</h3>
+        <hr style='border: none; height: 1px; background-color: #ccc;'>
 
         <p><strong>🛒 Ordered:</strong> {qty_needed} kg of <strong>{commodity}</strong></p>
         <p><strong>🏢 Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
@@ -250,4 +249,4 @@ if st.session_state.order_placed:
             🌿 Thanks for choosing Walmart FreshRoute AI for sustainable sourcing!
         </div>
     </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
