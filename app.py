@@ -227,7 +227,7 @@ if st.button("\U0001f680 Get AI Decision"):
 </div>""", unsafe_allow_html=True)
 
 
-   st.success("\U0001f4e6 AI Decision Generated")
+   st.success("\U0001f4e6 AI Decision Generated"):
 ]st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
 <strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
