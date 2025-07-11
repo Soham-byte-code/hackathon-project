@@ -203,7 +203,7 @@ if st.session_state.decision_done:
         final_cost = round(total_cost + best['transport_cost'], 2)
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
-        route = f"{supplier_name} → {Wagholi} (Pune) → Shanivar Peth (Pune)"
+        route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
 
         if prediction == 0 and best['price_per_unit'] < central_price and current_emission < central_emissions:
             decision = "✅ Source Locally (Overridden by Sustainability)"
