@@ -224,7 +224,6 @@ if st.session_state.decision_done:
             st.session_state.order_placed = True
 
 if st.session_state.order_placed:
-    st.balloons()
     st.markdown(f"""
     <div style='
         text-align: center;
