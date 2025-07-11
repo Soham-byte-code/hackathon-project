@@ -226,13 +226,14 @@ if st.session_state.decision_done:
 if st.session_state.order_placed:
     st.balloons()
     st.markdown(f"""
-    <div style='text-align: center; padding: 30px; background-color: #e9f8e5; border-radius: 12px;'>
-        <h3>✅ Order Placed Successfully!</h3>
-        <p>You have placed an order for <strong>{qty_needed} kg of {commodity}</strong>.</p>
-        <p><strong>Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})</p>
-        <p><strong>Delivery Route:</strong> {route}</p>
-        <p><strong>Final Cost:</strong> ₹{final_cost}</p>
-        <p><strong>ETA:</strong> {travel_time} hours</p>
-        <p style='color: green; font-weight: bold;'>Thanks for choosing sustainability with Walmart FreshRoute AI 🌱</p>
+    <div style='padding: 35px; background-color: #f0fff0; border-radius: 15px; border: 2px solid #b2d8b2; text-align: left; font-size: 18px; line-height: 1.8;'>
+        <h2 style='text-align: center; color: green;'>✅ Order Placed Successfully</h2>
+        <hr>
+        <strong>🛒 Ordered:</strong> {qty_needed} kg of <strong>{commodity}</strong><br>
+        <strong>🏢 Supplier:</strong> {best['supplier_name']} (ID: {best['supplier_id']})<br>
+        <strong>🚚 Route:</strong> {route}<br>
+        <strong>💰 Final Cost:</strong> ₹{final_cost}<br>
+        <strong>⏳ ETA:</strong> {travel_time} hours<br><br>
+        <div style='text-align:center; color: darkgreen; font-weight: bold;'>🌱 Thank you for choosing Walmart FreshRoute AI for smarter, sustainable sourcing!</div>
     </div>
     """, unsafe_allow_html=True)
