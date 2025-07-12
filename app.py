@@ -117,13 +117,19 @@ if st.button("📊 Predict Next Week's Sales"):
     df_filtered = df_filtered.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
     df_p = df_filtered.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
 
-    model = Prophet(weekly_seasonality=True, yearly_seasonality=True)
-    model.fit(df_p)
-    future = model.make_future_dataframe(periods=1, freq="W-MON")
-    forecast = model.predict(future).tail(1)
+    if df_p.empty:
+        st.error("No sales data available for the selected product.")
+    else:
+        model = Prophet(weekly_seasonality=True, yearly_seasonality=True)
+        model.fit(df_p)
+        future = model.make_future_dataframe(periods=1, freq="W-MON")
+        forecast = model.predict(future).tail(1)
 
-    forecasted_qty = int(forecast["yhat"].values[0])
-    st.success(f"📦 Predicted sales for next week ({forecast['ds'].values[0][:10]}): **{forecasted_qty} units**")
+        if forecast.empty:
+            st.error("Forecast could not be generated. Please check the data.")
+        else:
+            forecasted_qty = int(forecast["yhat"].values[0])
+            st.success(f"📦 Predicted sales for next week ({forecast['ds'].values[0][:10]}): **{forecasted_qty} units**")
 
 # ========== Train AI Model ==========
 np.random.seed(42)
