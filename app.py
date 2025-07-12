@@ -124,12 +124,28 @@ np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
 demand['central_price'] = demand['modal_price'] + demand['transport_cost']
-demand['local_price'] = np.random.randint(1000, 2500, size=len(demand))
-demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
 
+# ✅ Use real local price from supplier dataset
+# Merging supplier prices based on 'commodity'
+demand = demand.merge(
+    suppliers[['commodity', 'price_per_unit']],
+    on='commodity',
+    how='left'
+)
+demand.rename(columns={'price_per_unit': 'local_price'}, inplace=True)
+
+# Calculate sourcing decision
+demand['decision'] = np.where(
+    (demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400),
+    1, 0
+)
+
+# Train RandomForest model
 model = RandomForestClassifier(n_estimators=150, random_state=42)
-model.fit(demand[['modal_price','distance_km','transport_cost','local_price','central_price']], demand['decision'])
-
+model.fit(
+    demand[['modal_price', 'distance_km', 'transport_cost', 'local_price', 'central_price']],
+    demand['decision']
+)
 # ========================
 # UI & Logic
 # ========================
