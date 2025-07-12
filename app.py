@@ -151,14 +151,14 @@ if st.button("📊 Predict Next Week's Sales"):
         model_prophet.fit(df_p)
         future = model_prophet.make_future_dataframe(periods=1, freq="W-MON")
         forecast = model_prophet.predict(future)
-if forecast['ds'].notna().any():
-    last_date = pd.to_datetime(forecast['ds'].values[-1])
-    forecasted_qty = int(forecast['yhat'].values[-1])
-    forecast_date = last_date.strftime('%Y-%m-%d')
-    st.success(f"📦 Predicted sales for next week ({forecast_date}): {forecasted_qty} units")
-else:
-    st.error("❌ Forecast failed. No valid date found in the forecast output.")
 
+        if not forecast.empty and 'yhat' in forecast.columns and not forecast['ds'].isnull().all():
+            last_date = pd.to_datetime(forecast['ds'].iloc[-1])
+            forecasted_qty = int(forecast['yhat'].iloc[-1])
+            forecast_date = last_date.strftime('%Y-%m-%d')
+            st.success(f"📦 Predicted sales for next week ({forecast_date}): {forecasted_qty} units")
+        else:
+            st.error("❌ Forecast failed. No valid date found in the forecast output.")
 
 # ========================
 # Sourcing UI
@@ -228,3 +228,4 @@ if st.button("🚀 Get AI Decision"):
 <strong>ETA:</strong> {eta} hrs<br>
 <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
 </div>""", unsafe_allow_html=True)
+
