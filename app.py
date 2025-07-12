@@ -63,6 +63,9 @@ def load_data():
     distance_df = pd.read_csv("extended_distance_dataset.csv")  # updated to new distance dataset
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
+
+    st.write("🔎 Preview of supplier data:", suppliers.head())  # 👈 Add this line here to see the data
+
     return suppliers, emissions, distance_df, inventory, demand
 
 
