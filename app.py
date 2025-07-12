@@ -4,60 +4,59 @@ import numpy as np
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
 
-# Prophet for Forecasting
+# Prophet
 try:
     from prophet import Prophet
 except ImportError:
     st.error("Please install Prophet: pip install prophet")
     st.stop()
 
-# ========================
-# Password Protection
-# ========================
+# ========== Password Protection ==========
 def check_password():
     correct_password = "Rait@123"
     password = st.text_input("🔒 Enter Password to Access", type="password")
     if password == "":
         st.stop()
     elif password != correct_password:
-        st.error("❌ Incorrect password. Please try again.")
+        st.error("❌ Incorrect password.")
         st.stop()
 
 check_password()
 
-# ========================
-# Forecasting Functions
-# ========================
-def preprocess(df: pd.DataFrame, product: str) -> pd.Series:
-    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
-    df = df.dropna(subset=["Date"])
-    df = df[df["Product_Name"].str.lower() == product.lower()]
-    df = df.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
-    return df
+# ========== Styling ==========
+st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
+st.markdown("""
+<style>
+html, body, [class*="css"] {
+    font-family: 'Segoe UI', sans-serif;
+    color: #222 !important;
+    text-align: center;
+}
+.stButton>button {
+    background-color: #ffc220;
+    color: black;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 10px 25px;
+    margin: 10px auto;
+    display: block;
+}
+.stButton>button:hover {
+    background-color: #e6ac00;
+    color: white;
+}
+.report-text {
+    font-size: 16px;
+    line-height: 1.8;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 700px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-def train_prophet_model(weekly: pd.Series):
-    df_p = weekly.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
-    model = Prophet(weekly_seasonality=True, yearly_seasonality=True, daily_seasonality=False)
-    model.fit(df_p)
-    return model
-
-def forecast_prophet(model, periods=1):
-    fc = model.predict(model.make_future_dataframe(periods, freq="W-MON")).tail(periods)
-    return fc[["ds", "yhat", "yhat_lower", "yhat_upper"]]
-
-def next_monday(date: datetime) -> datetime:
-    return date + timedelta(days=(7 - date.weekday()) % 7)
-
-def spoilage_rate(yhat: float, lower: float, upper: float) -> float:
-    if yhat == 0 or upper <= 0:
-        return 0.0
-    expected_loss = upper - yhat
-    rate = max(expected_loss, 0) / (upper - lower + 1e-6)
-    return round(min(rate, 1.0), 4)
-
-# ========================
-# Load Data
-# ========================
+# ========== Load Data ==========
 @st.cache_data
 def load_data():
     suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")
@@ -66,30 +65,19 @@ def load_data():
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     train_df = pd.read_csv("train_data.csv")
-    test_df = pd.read_csv("test_data.csv")
-    return suppliers, emissions, distance_df, inventory, demand, train_df, test_df
+    return suppliers, emissions, distance_df, inventory, demand, train_df
 
-suppliers, emissions, distance_df, inventory, demand, train_df, test_df = load_data()
+suppliers, emissions, distance_df, inventory, demand, train_df = load_data()
 
-# ========================
-# Constants
-# ========================
+# ========== Constants ==========
 PETROL_PRICE = 106
 CO2_PER_KM_DEFAULT = 0.15
-REALISTIC_SPOILAGE_RATES = {
-    "tomato": 0.01, "onion": 0.003, "potato": 0.004,
-    "cabbage": 0.005, "spinach": 0.012, "cauliflower": 0.006,
-    "carrot": 0.002, "banana": 0.018, "mango": 0.02,
-    "grapes": 0.015, "almonds": 0.0005, "dry fruits": 0.0008,
-    "default": 0.007
-}
+REALISTIC_SPOILAGE_RATES = {"tomato": 0.01, "onion": 0.003, "potato": 0.004, "cabbage": 0.005, "spinach": 0.012,
+                            "cauliflower": 0.006, "carrot": 0.002, "banana": 0.018, "mango": 0.02,
+                            "grapes": 0.015, "almonds": 0.0005, "dry fruits": 0.0008, "default": 0.007}
 HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry fruits", "grains", "nuts"]
-VEHICLE_EMISSIONS = {
-    "EV scooter": 0.03, "Bike": 0.02, "Tempo": 0.1, "Mini Truck": 0.12, "Truck": 0.18
-}
-VEHICLE_MILEAGE_BY_TYPE = {
-    "EV scooter": 60, "Bike": 40, "Tempo": 20, "Mini Truck": 15, "Truck": 8
-}
+VEHICLE_EMISSIONS = {"EV scooter": 0.03, "Bike": 0.02, "Tempo": 0.1, "Mini Truck": 0.12, "Truck": 0.18}
+VEHICLE_MILEAGE_BY_TYPE = {"EV scooter": 60, "Bike": 40, "Tempo": 20, "Mini Truck": 15, "Truck": 8}
 
 def assign_vehicle(weight_kg):
     if weight_kg <= 5:
@@ -101,59 +89,59 @@ def assign_vehicle(weight_kg):
     else:
         return "Truck"
 
-# ========================
-# Preprocessing
-# ========================
+# ========== Preprocessing ==========
 suppliers = suppliers.merge(distance_df[['supplier_id', 'distance_from_inventory_km']], on='supplier_id', how='left')
 suppliers = suppliers.merge(emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']], on='supplier_id', how='left')
 suppliers.fillna({
     'fuel_cost_per_km': 0, 'co2_per_km': CO2_PER_KM_DEFAULT,
     'spoilage_rate_per_km': 0.001, 'distance_from_inventory_km': 50
 }, inplace=True)
-
 suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
 suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
 suppliers['shelf_life_days'] = suppliers.apply(
-    lambda row: 90 if row['commodity'].lower() in HIGH_SHELF_COMMODITIES else row['shelf_life_days'], axis=1
-)
+    lambda row: 90 if row['commodity'].lower() in HIGH_SHELF_COMMODITIES else row['shelf_life_days'], axis=1)
 suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['emissions_kg']
 
-# ========================
-# Train AI Model
-# ========================
+# ========== Prophet Forecast Section ==========
+st.subheader("📈 Forecast Weekly Sales for a Product")
+
+product_options = sorted(train_df['Product_Name'].dropna().unique())
+selected_product = st.selectbox("📦 Select Product for Forecast", product_options)
+
+if st.button("📊 Predict Next Week's Sales"):
+    df_filtered = train_df[train_df["Product_Name"].str.lower() == selected_product.lower()].copy()
+    df_filtered["Date"] = pd.to_datetime(df_filtered["Date"], errors="coerce")
+    df_filtered.dropna(subset=["Date"], inplace=True)
+    df_filtered = df_filtered.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
+    df_p = df_filtered.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
+
+    model = Prophet(weekly_seasonality=True, yearly_seasonality=True)
+    model.fit(df_p)
+    future = model.make_future_dataframe(periods=1, freq="W-MON")
+    forecast = model.predict(future).tail(1)
+
+    forecasted_qty = int(forecast["yhat"].values[0])
+    st.success(f"📦 Predicted sales for next week ({forecast['ds'].values[0][:10]}): **{forecasted_qty} units**")
+
+# ========== Train AI Model ==========
 np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
 demand['central_price'] = demand['modal_price'] + demand['transport_cost']
-demand['local_price'] = demand['modal_price']
+demand = demand.merge(suppliers[['commodity', 'price_per_unit']], on='commodity', how='left')
+demand.rename(columns={'price_per_unit': 'local_price'}, inplace=True)
 demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
 
 model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[['modal_price','distance_km','transport_cost','local_price','central_price']], demand['decision'])
 
-# ========================
-# UI & Logic
-# ========================
-st.markdown("""
-<div style='text-align: center;'>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png" width="160">
-    <h2 style='color:#0071ce; margin-top: 10px;'>Walmart FreshRoute AI</h2>
-    <p style='font-size:18px;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>
-</div>
-""", unsafe_allow_html=True)
+# ========== Sourcing UI ==========
+st.markdown("<hr><h2>🧠 AI Sourcing Decision</h2>", unsafe_allow_html=True)
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=10)
 
-if "decision_ready" not in st.session_state:
-    st.session_state.decision_ready = False
-if "order_placed" not in st.session_state:
-    st.session_state.order_placed = False
-
 if st.button("🚀 Get AI Decision"):
-    st.session_state.decision_ready = False
-    st.session_state.order_placed = False
-
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
@@ -190,20 +178,8 @@ if st.button("🚀 Get AI Decision"):
 
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
-        if supply_area.lower() == "pune":
-            supply_area = "Wagholi"
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         eta = round(dist / 30, 2)
-
-        st.session_state.order_details = {
-            "commodity": commodity,
-            "qty": qty_needed,
-            "supplier": supplier_name,
-            "supplier_id": best['supplier_id'],
-            "route": route,
-            "final_cost": final_cost,
-            "eta": eta
-        }
 
         st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
@@ -224,24 +200,4 @@ if st.button("🚀 Get AI Decision"):
 <strong>Route:</strong> {route}<br>
 <strong>ETA:</strong> {eta} hrs<br>
 <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
-</div>""", unsafe_allow_html=True)
-
-        st.session_state.decision_ready = True
-
-if st.session_state.decision_ready and not st.session_state.order_placed:
-    if st.button("🛒 Place Order"):
-        st.session_state.order_placed = True
-
-if st.session_state.order_placed:
-    order = st.session_state.order_details
-    st.markdown(f"""
-<div style='text-align: center; padding: 40px 30px; background-color: #1e1e1e; border-radius: 16px; color: #f0f0f0; font-family: "Segoe UI"; line-height:1.6; max-width:600px; margin:0 auto; border:1px solid #333;'>
-  <div style='font-size:24px; font-weight:600; margin-bottom:16px; color:#00e676;'>✅ Order Placed Successfully!</div>
-  <p style='font-size:18px;'>🛒 You have placed an order for <strong>{order["qty"]} kg of {order["commodity"]}</strong>.</p>
-  <p><strong>🏢 Supplier:</strong> {order["supplier"]} (ID: {order["supplier_id"]})</p>
-  <p><strong>🚚 Route:</strong> {order["route"]}</p>
-  <p><strong>💰 Final Cost:</strong> ₹{order["final_cost"]}</p>
-  <p><strong>⏳ ETA:</strong> {order["eta"]} hours</p>
-  <hr style='border:none; border-top:1px solid #444; margin:20px 0;'>
-  <p style='color:#8bc34a; font-weight:600; font-size:16px;'>🌱 Thanks for choosing sustainability with <span style="color:#4caf50;">Walmart FreshRoute AI</span></p>
 </div>""", unsafe_allow_html=True)
