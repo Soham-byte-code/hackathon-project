@@ -1,9 +1,14 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
-from datetime import datetime
-
+# Prophet for Forecasting
+try:
+    from prophet import Prophet
+except ImportError:
+    st.error("Please install Prophet: pip install prophet")
+    st.stop()
 # ========================
 # Password Protection
 # ========================
@@ -17,6 +22,80 @@ def check_password():
         st.stop()
 
 check_password()
+
+# ========================
+# Forecasting Functions
+# ========================
+def preprocess(df: pd.DataFrame, product: str) -> pd.Series:
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df = df.dropna(subset=["Date"])
+    df = df[df["Product_Name"].str.lower() == product.lower()]
+    df = df.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
+    return df
+
+def train_prophet_model(weekly: pd.Series):
+    df_p = weekly.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
+    model = Prophet(weekly_seasonality=True, yearly_seasonality=True, daily_seasonality=False)
+    model.fit(df_p)
+    return model
+
+def forecast_prophet(model, periods=1):
+    fc = model.predict(model.make_future_dataframe(periods, freq="W-MON")).tail(periods)
+    return fc[["ds", "yhat", "yhat_lower", "yhat_upper"]]
+
+def next_monday(date: datetime) -> datetime:
+    return date + timedelta(days=(7 - date.weekday()) % 7)
+
+def spoilage_rate(yhat: float, lower: float, upper: float) -> float:
+    if yhat == 0 or upper <= 0:
+        return 0.0
+    expected_loss = upper - yhat
+    rate = max(expected_loss, 0) / (upper - lower + 1e-6)
+    return round(min(rate, 1.0), 4)
+
+# ========================
+# Streamlit UI
+# ========================
+st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
+st.title("🌿 Walmart FreshRoute AI")
+
+commodity = st.selectbox("🥦 Select a commodity to forecast:", sorted(suppliers['commodity'].dropna().unique()))
+qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=10)
+future_date = st.date_input("📅 Select Future Date for Demand Forecast")
+
+# Forecast Button
+if st.button("🔍 Predict Future Demand"):
+    try:
+        combined_df = pd.concat([train_df, test_df], ignore_index=True)
+        weekly = preprocess(combined_df, commodity)
+        if weekly.empty:
+            st.error(f"No data found for {commodity}.")
+        else:
+            target_dt = next_monday(pd.to_datetime(future_date))
+            periods_ahead = (target_dt - weekly.index[-1]).days // 7
+            if periods_ahead <= 0:
+                st.warning("Please choose a date beyond the latest data.")
+            else:
+                model = train_prophet_model(weekly)
+                fc = forecast_prophet(model, periods=periods_ahead)
+                row = fc.iloc[-1]
+                yhat = max(0, row["yhat"])
+                lower = row["yhat_lower"]
+                upper = row["yhat_upper"]
+                spoilage = spoilage_rate(yhat, lower, upper)
+
+                st.success("✅ Forecast Complete")
+                st.markdown(f"""
+                **📦 Demand Forecast for `{commodity}`**
+                - **📅 Week Starting:** `{row['ds'].date()}`
+                - **🔮 Expected Sales:** `{round(yhat, 2)} units`
+                - **🔽 Lower Bound:** `{round(lower, 2)} units`
+                - **🔼 Upper Bound:** `{round(upper, 2)} units`
+                - **⚠️ Spoilage Risk:** `{round(spoilage*100, 2)}%`
+                - **📉 Model Used:** Prophet
+                """)
+    except Exception as e:
+        st.error(f"Error in forecasting: {e}")
 
 # ========================
 # Page Setup
@@ -63,9 +142,11 @@ def load_data():
     distance_df = pd.read_csv("extended_distance_dataset.csv")
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
-    return suppliers, emissions, distance_df, inventory, demand
+    train_df = pd.read_csv("train_data.csv")
+    test_df = pd.read_csv("test_data.csv")
+    return suppliers, emissions, distance_df, inventory, demand, train_df, test_df
 
-suppliers, emissions, distance_df, inventory, demand = load_data()
+suppliers, emissions, distance_df, inventory, demand, train_df, test_df = load_data()
 
 # ========================
 # Constants
