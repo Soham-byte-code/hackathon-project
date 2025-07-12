@@ -121,33 +121,16 @@ suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['emissions_kg
 # Train AI Model
 # ========================
 np.random.seed(42)
-
-# Add distance and transport cost to demand data
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
 demand['central_price'] = demand['modal_price'] + demand['transport_cost']
+demand['local_price'] = np.random.randint(1000, 2500, size=len(demand))
+demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
 
-# ✅ Pick the same best supplier (lowest local_score) per commodity
-suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['emissions_kg']
-best_suppliers = suppliers.loc[suppliers.groupby('commodity')['local_score'].idxmin()]
-best_prices = best_suppliers[['commodity', 'price_per_unit']]
-best_prices.rename(columns={'price_per_unit': 'local_price'}, inplace=True)
-
-# Merge real local prices into demand data
-demand = pd.merge(demand, best_prices, on='commodity', how='left')
-
-# Compute decision
-demand['decision'] = np.where(
-    (demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400),
-    1, 0
-)
-
-# Train model
 model = RandomForestClassifier(n_estimators=150, random_state=42)
-model.fit(
-    demand[['modal_price', 'distance_km', 'transport_cost', 'local_price', 'central_price']],
-    demand['decision']
-)
+model.fit(demand[['modal_price','distance_km','transport_cost','local_price','central_price']], demand['decision'])
+
+
 # ========================
 # UI & Logic
 # ========================
