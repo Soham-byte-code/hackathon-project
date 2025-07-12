@@ -58,15 +58,12 @@ html, body, [class*="css"] {
 # ========================
 @st.cache_data
 def load_data():
-    suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")  # supplier CSV
+    suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")
     emissions = pd.read_csv("transport_route_emissions.csv")
-    distance_df = pd.read_csv("extended_distance_dataset.csv")  # updated to new distance dataset
+    distance_df = pd.read_csv("extended_distance_dataset.csv")
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     return suppliers, emissions, distance_df, inventory, demand
-
-
-
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
@@ -124,12 +121,11 @@ np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
 demand['central_price'] = demand['modal_price'] + demand['transport_cost']
-demand['local_price'] = np.random.randint(1000, 2500, size=len(demand))
+demand['local_price'] = demand['modal_price']  # FIXED: no random, aligned with price_per_unit
 demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
 
 model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[['modal_price','distance_km','transport_cost','local_price','central_price']], demand['decision'])
-
 
 # ========================
 # UI & Logic
@@ -174,7 +170,6 @@ if st.button("🚀 Get AI Decision"):
         central_vehicle = assign_vehicle(qty_needed)
         central_emissions = round(central_distance_km * VEHICLE_EMISSIONS.get(central_vehicle, CO2_PER_KM_DEFAULT), 2)
 
-
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         ai_input = pd.DataFrame([{
             'modal_price': best['price_per_unit'],
@@ -196,7 +191,6 @@ if st.button("🚀 Get AI Decision"):
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         eta = round(dist / 30, 2)
 
-        # Store for confirmation page
         st.session_state.order_details = {
             "commodity": commodity,
             "qty": qty_needed,
