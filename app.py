@@ -166,7 +166,10 @@ if st.button("🚀 Get AI Decision"):
         shelf_life = 90 if commodity.lower() in HIGH_SHELF_COMMODITIES else max(1, 20 - dist // 5)
         total_cost = round(qty_needed * best['price_per_unit'], 2)
         final_cost = round(total_cost + transport_cost, 2)
-        central_emissions = round(150 * CO2_PER_KM_DEFAULT, 2)
+        central_distance_km = 150
+        central_vehicle = assign_vehicle(qty_needed)
+        central_emissions = round(central_distance_km * VEHICLE_EMISSIONS.get(central_vehicle, CO2_PER_KM_DEFAULT), 2)
+
 
         central_price = round(best['price_per_unit'] * np.random.uniform(1.8, 2.4), 2)
         ai_input = pd.DataFrame([{
