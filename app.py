@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from sklearn.ensemble import RandomForestClassifier
+
 # Prophet for Forecasting
 try:
     from prophet import Prophet
 except ImportError:
     st.error("Please install Prophet: pip install prophet")
     st.stop()
+
 # ========================
 # Password Protection
 # ========================
@@ -52,85 +54,6 @@ def spoilage_rate(yhat: float, lower: float, upper: float) -> float:
     expected_loss = upper - yhat
     rate = max(expected_loss, 0) / (upper - lower + 1e-6)
     return round(min(rate, 1.0), 4)
-
-# ========================
-# Streamlit UI
-# ========================
-st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
-st.title("🌿 Walmart FreshRoute AI")
-
-commodity = st.selectbox("🥦 Select a commodity to forecast:", sorted(suppliers['commodity'].dropna().unique()))
-qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=10)
-future_date = st.date_input("📅 Select Future Date for Demand Forecast")
-
-# Forecast Button
-if st.button("🔍 Predict Future Demand"):
-    try:
-        combined_df = pd.concat([train_df, test_df], ignore_index=True)
-        weekly = preprocess(combined_df, commodity)
-        if weekly.empty:
-            st.error(f"No data found for {commodity}.")
-        else:
-            target_dt = next_monday(pd.to_datetime(future_date))
-            periods_ahead = (target_dt - weekly.index[-1]).days // 7
-            if periods_ahead <= 0:
-                st.warning("Please choose a date beyond the latest data.")
-            else:
-                model = train_prophet_model(weekly)
-                fc = forecast_prophet(model, periods=periods_ahead)
-                row = fc.iloc[-1]
-                yhat = max(0, row["yhat"])
-                lower = row["yhat_lower"]
-                upper = row["yhat_upper"]
-                spoilage = spoilage_rate(yhat, lower, upper)
-
-                st.success("✅ Forecast Complete")
-                st.markdown(f"""
-                **📦 Demand Forecast for `{commodity}`**
-                - **📅 Week Starting:** `{row['ds'].date()}`
-                - **🔮 Expected Sales:** `{round(yhat, 2)} units`
-                - **🔽 Lower Bound:** `{round(lower, 2)} units`
-                - **🔼 Upper Bound:** `{round(upper, 2)} units`
-                - **⚠️ Spoilage Risk:** `{round(spoilage*100, 2)}%`
-                - **📉 Model Used:** Prophet
-                """)
-    except Exception as e:
-        st.error(f"Error in forecasting: {e}")
-
-# ========================
-# Page Setup
-# ========================
-st.set_page_config(page_title="Walmart FreshRoute AI", page_icon="🌿", layout="centered")
-st.markdown("""
-<style>
-html, body, [class*="css"] {
-    font-family: 'Segoe UI', sans-serif;
-    color: #222 !important;
-    text-align: center;
-}
-.stButton>button {
-    background-color: #ffc220;
-    color: black;
-    font-weight: bold;
-    border-radius: 6px;
-    padding: 10px 25px;
-    margin: 10px auto;
-    display: block;
-}
-.stButton>button:hover {
-    background-color: #e6ac00;
-    color: white;
-}
-.report-text {
-    font-size: 16px;
-    line-height: 1.8;
-    text-align: left;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 700px;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # ========================
 # Load Data
@@ -202,7 +125,7 @@ np.random.seed(42)
 demand['distance_km'] = np.random.randint(10, 150, size=len(demand))
 demand['transport_cost'] = demand['distance_km'] * 4
 demand['central_price'] = demand['modal_price'] + demand['transport_cost']
-demand['local_price'] = demand['modal_price']  # FIXED: no random, aligned with price_per_unit
+demand['local_price'] = demand['modal_price']
 demand['decision'] = np.where((demand['local_price'] < demand['central_price']) & (demand['transport_cost'] < 400), 1, 0)
 
 model = RandomForestClassifier(n_estimators=150, random_state=42)
