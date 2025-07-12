@@ -1,0 +1,157 @@
+supplier_id,supplier_name,commodity,available_quantity_kg,price_per_unit,distance_from_store_km,supply_region,transport_mode
+P1001,Annapurna Agro,Cinnamon,442,198,13,Pune,Tempo
+P1001,Annapurna Agro,Basil,286,200,13,Pune,Truck
+P1001,Annapurna Agro,Potato,190,33,13,Pune,Mini Truck
+P1001,Annapurna Agro,Sage,135,800,13,Pune,EV Van
+P1001,Annapurna Agro,Mustard greens,143,63,13,Pune,EV Van
+P1001,Annapurna Agro,Pecans,170,1300,13,Pune,Bike
+P1001,Annapurna Agro,Onion,392,35,13,Pune,Truck
+P1001,Annapurna Agro,Dates,109,180,13,Pune,Mini Truck
+P1001,Annapurna Agro,Papaya,232,46,13,Pune,Mini Truck
+P1001,Annapurna Agro,Cauliflower,387,49,13,Pune,Bike
+P1001,Annapurna Agro,Tomato,124,50,13,Pune,Tempo
+P1001,Annapurna Agro,Coriander,141,40,13,Pune,Tempo
+P1001,Annapurna Agro,Fenugreek,288,110,13,Pune,EV Van
+P1001,Annapurna Agro,Brinjal,340,34,13,Pune,Bike
+P1001,Annapurna Agro,Cabbage,321,83,13,Pune,Truck
+P1001,Annapurna Agro,Bananas,461,30,13,Pune,EV Van
+P1001,Annapurna Agro,Spinach,201,45,13,Pune,Bike
+P1001,Annapurna Agro,Cloves,211,800,13,Pune,Truck
+P1002,Ecoville,Bay leaves,315,45,22,Pune,Bike
+P1002,Ecoville,Cherries,465,400,22,Pune,Mini Truck
+P1002,Ecoville,Brinjal,324,31,22,Pune,EV Van
+P1002,Ecoville,Peas,217,80,22,Pune,Electric Van
+P1002,Ecoville,Pear,404,126,22,Pune,Bike
+P1002,Ecoville,Coriander,369,55,22,Pune,Mini Truck
+P1002,Ecoville,Cabbage,489,83,22,Pune,Electric Van
+P1002,Ecoville,Poppy seeds,276,300,22,Pune,Truck
+P1002,Ecoville,Quinoa,360,703,22,Pune,Truck
+P1002,Ecoville,Pistachios,486,1000,22,Pune,Truck
+P1002,Ecoville,Okra,311,48,22,Pune,Mini Truck
+P1002,Ecoville,Tarragon,133,200,22,Pune,Mini Truck
+P1002,Ecoville,Spring onion,263,30,22,Pune,Tempo
+P1002,Ecoville,Spinach,419,40,22,Pune,Tempo
+P1002,Ecoville,Broccoli,294,120,22,Pune,Mini Truck
+P1002,Ecoville,Flax seeds,302,65,22,Pune,Mini Truck
+P1002,Ecoville,Cauliflower,486,58,22,Pune,Mini Truck
+P1003,FreshLeaf Agro,Drumsticks,319,58,15,Pune,Tempo
+P1003,FreshLeaf Agro,Peppercorn,112,500,15,Pune,Tempo
+P1003,FreshLeaf Agro,Oregano,186,230,15,Pune,Tempo
+P1003,FreshLeaf Agro,Cauliflower,282,44,15,Pune,Mini Truck
+P1003,FreshLeaf Agro,Sesame seeds,347,120,15,Pune,Truck
+P1003,FreshLeaf Agro,Kiwi,296,200,15,Pune,Mini Truck
+P1003,FreshLeaf Agro,Fenugreek,453,115,15,Pune,EV Van
+P1003,FreshLeaf Agro,Tomato,181,55,15,Pune,Truck
+P1003,FreshLeaf Agro,Apples,249,120,15,Pune,Truck
+P1003,FreshLeaf Agro,Garlic,442,105,15,Pune,Electric Van
+P1003,FreshLeaf Agro,Turnip,274,35,15,Pune,EV Van
+P1003,FreshLeaf Agro,Potato,240,33,15,Pune,Tempo
+P1003,FreshLeaf Agro,Coriander,147,80,15,Pune,Tempo
+P1003,FreshLeaf Agro,Carrot,204,33,15,Pune,Tempo
+P1003,FreshLeaf Agro,Cabbage,267,83,15,Pune,EV Van
+P1003,FreshLeaf Agro,Ginger,186,43,15,Pune,Tempo
+P1003,FreshLeaf Agro,Onions,313,35,15,Pune,Mini Truck
+P1003,FreshLeaf Agro,Potatoes,405,25,15,Pune,Truck
+P1004,GreenHarvest,Tomato,408,50,12,Pune,Truck
+P1004,GreenHarvest,Carrot,493,49,12,Pune,Bike
+P1004,GreenHarvest,Cabbage,315,81,12,Pune,Electric Van
+P1004,GreenHarvest,Fenugreek,437,206,12,Pune,Tempo
+P1004,GreenHarvest,Cauliflower,478,44,12,Pune,Truck
+P1004,GreenHarvest,Chickpeas,355,70,12,Pune,Truck
+P1004,GreenHarvest,Thyme,242,200,12,Pune,Mini Truck
+P1004,GreenHarvest,Parsnip,256,150,12,Pune,Electric Van
+P1004,GreenHarvest,Sunflower seeds,330,100,12,Pune,EV Van
+P1004,GreenHarvest,Macadamia nuts,208,2000,12,Pune,Tempo
+P1004,GreenHarvest,Pumpkin,359,40,12,Pune,Electric Van
+P1004,GreenHarvest,Spinach,370,63,12,Pune,Electric Van
+P1005,Krishi Organic,Artichoke,444,300,18,Pune,Mini Truck
+P1005,Krishi Organic,Coriander seeds,471,50,18,Pune,Tempo
+P1005,Krishi Organic,Peaches,102,100,18,Pune,Electric Van
+P1005,Krishi Organic,Tomato,393,60,18,Pune,Bike
+P1005,Krishi Organic,Nutmeg,392,800,18,Pune,Mini Truck
+P1005,Krishi Organic,Lentils,130,87,18,Pune,EV Van
+P1005,Krishi Organic,Mint,371,803,18,Pune,Electric Van
+P1005,Krishi Organic,Cauliflower,452,50,18,Pune,Bike
+P1005,Krishi Organic,Coriander,361,69,18,Pune,Bike
+P1005,Krishi Organic,Celery,297,130,18,Pune,Tempo
+P1005,Krishi Organic,Cabbage,333,80,18,Pune,Electric Van
+P1005,Krishi Organic,Brinjal,228,53,18,Pune,Truck
+P1005,Krishi Organic,Potato,197,34,18,Pune,Electric Van
+P1005,Krishi Organic,Carrot,140,45,18,Pune,Electric Van
+P1005,Krishi Organic,Coconut,486,55,18,Pune,Tempo
+P1006,Nature's Cart,Chives,165,840,14,Pune,Tempo
+P1006,Nature's Cart,Cucumber,452,30,14,Pune,Mini Truck
+P1006,Nature's Cart,Lettuce,453,80,14,Pune,Mini Truck
+P1006,Nature's Cart,Mustard seeds,193,65,14,Pune,Truck
+P1006,Nature's Cart,Green beans,187,60,14,Pune,Tempo
+P1006,Nature's Cart,Soybeans,471,53,14,Pune,EV Van
+P1006,Nature's Cart,Brazil nuts,397,1200,14,Pune,Mini Truck
+P1006,Nature's Cart,Beetroot,258,35,14,Pune,Bike
+P1006,Nature's Cart,Carrots,437,33,14,Pune,Truck
+P1006,Nature's Cart,Mangoes,471,50,14,Pune,EV Van
+P1006,Nature's Cart,Tomatoes,442,62,14,Pune,Mini Truck
+P1006,Nature's Cart,Pomegranate,323,105,14,Pune,Tempo
+P1006,Nature's Cart,Leek,240,200,14,Pune,Mini Truck
+P1006,Nature's Cart,Fenugreek,468,120,14,Pune,Truck
+P1006,Nature's Cart,Brinjal,159,36,14,Pune,EV Van
+P1006,Nature's Cart,Potato,193,25,14,Pune,EV Van
+P1006,Nature's Cart,Tomato,428,49,14,Pune,Mini Truck
+P1006,Nature's Cart,Fennel,215,298,14,Pune,Electric Van
+P1006,Nature's Cart,Spinach,115,65,14,Pune,Bike
+P1006,Nature's Cart,Cauliflower,271,44,14,Pune,Truck
+P1007,Sahyadri Farms,Onion,277,35,10,Pune,Mini Truck
+P1007,Sahyadri Farms,Brinjal,347,31,10,Pune,Mini Truck
+P1007,Sahyadri Farms,Carrot,271,30,10,Pune,Truck
+P1007,Sahyadri Farms,Yam,348,55,10,Pune,Bike
+P1007,Sahyadri Farms,Asparagus,393,300,10,Pune,Tempo
+P1007,Sahyadri Farms,Guava,122,60,10,Pune,Electric Van
+P1007,Sahyadri Farms,Cardamom,235,2500,10,Pune,EV Van
+P1007,Sahyadri Farms,Jackfruit,262,60,10,Pune,Tempo
+P1007,Sahyadri Farms,Tomato,499,50,10,Pune,Tempo
+P1007,Sahyadri Farms,Cabbage,285,79,10,Pune,Bike
+P1007,Sahyadri Farms,Pineapple,367,65,10,Pune,Truck
+P1007,Sahyadri Farms,Kidney beans,242,125,10,Pune,Tempo
+P1008,Shivneri Naturals,Fenugreek,471,123,1,Pune,Bike
+P1008,Shivneri Naturals,Tomato,161,50,1,Pune,Tempo
+P1008,Shivneri Naturals,Spinach,108,60,1,Pune,EV Van
+P1008,Shivneri Naturals,Cabbage,175,84,1,Pune,Bike
+P1008,Shivneri Naturals,Carrot,144,45,1,Pune,Tempo
+P1008,Shivneri Naturals,Grapes,294,90,1,Pune,Truck
+P1008,Shivneri Naturals,Cashews,200,2472,1,Pune,Mini Truck
+P1008,Shivneri Naturals,Radish,288,30,1,Pune,EV Van
+P1008,Shivneri Naturals,Chia seeds,400,400,1,Pune,Tempo
+P1008,Shivneri Naturals,Peanuts,211,200,1,Pune,Truck
+P1008,Shivneri Naturals,Kale,314,60,1,Pune,Truck
+P1008,Shivneri Naturals,Snow peas,327,825,1,Pune,Tempo
+P1008,Shivneri Naturals,Capsicum,415,58,1,Pune,Truck
+P1008,Shivneri Naturals,Pumpkin seeds,369,425,1,Pune,Mini Truck
+P1008,Shivneri Naturals,Chestnuts,414,600,1,Pune,Bike
+P1008,Shivneri Naturals,Hazelnuts,366,270,1,Pune,Bike
+P1008,Shivneri Naturals,Walnuts,379,467,1,Pune,Bike
+P1009,Urban Roots,Tomato,489,45,11,Pune,Mini Truck
+P1009,Urban Roots,Black beans,263,179,11,Pune,Truck
+P1009,Urban Roots,Blueberries,469,1000,11,Pune,Truck
+P1009,Urban Roots,Brinjal,372,32,11,Pune,Bike
+P1009,Urban Roots,Potato,133,25,11,Pune,Mini Truck
+P1009,Urban Roots,Cauliflower,223,32,11,Pune,Mini Truck
+P1009,Urban Roots,Carrot,297,39,11,Pune,Bike
+P1009,Urban Roots,Turmeric,284,130,11,Pune,EV Van
+P1009,Urban Roots,Almonds,192,700,11,Pune,Bike
+P1009,Urban Roots,Rosemary,425,200,11,Pune,EV Van
+P1009,Urban Roots,Onion,179,30,11,Pune,EV Van
+P1009,Urban Roots,Raisins,259,350,11,Pune,Tempo
+P1009,Urban Roots,Coriander,139,30,11,Pune,Tempo
+P1009,Urban Roots,Plums,298,120,11,Pune,Tempo
+P1009,Urban Roots,Cabbage,438,73,11,Pune,Bike
+P1010,Vrundavan Farms,Fenugreek,261,40,30,Pune,Tempo
+P1010,Vrundavan Farms,Bitter gourd,491,37,30,Pune,EV Van
+P1010,Vrundavan Farms,Cauliflower,401,40,30,Pune,Mini Truck
+P1010,Vrundavan Farms,Brinjal,358,38,30,Pune,Mini Truck
+P1010,Vrundavan Farms,Coriander,106,30,30,Pune,Truck
+P1010,Vrundavan Farms,Cumin,108,120,30,Pune,Tempo
+P1010,Vrundavan Farms,Zucchini,123,120,30,Pune,Bike
+P1010,Vrundavan Farms,Apricots,307,250,30,Pune,Electric Van
+P1010,Vrundavan Farms,Lemons,335,140,30,Pune,EV Van
+P1010,Vrundavan Farms,Figs,101,180,30,Pune,Tempo
+P1010,Vrundavan Farms,Cabbage,131,88,30,Pune,Bike
+P1010,Vrundavan Farms,Onion,451,25,30,Pune,Tempo
