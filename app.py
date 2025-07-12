@@ -226,7 +226,6 @@ if st.button("🚀 Get AI Decision"):
 if st.session_state.decision_ready and not st.session_state.order_placed:
     if st.button("🛒 Place Order"):
         st.session_state.order_placed = True
-        st.balloons()
 
 if st.session_state.order_placed:
     order = st.session_state.order_details
