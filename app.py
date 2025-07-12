@@ -116,6 +116,10 @@ if st.button("📊 Predict Next Week's Sales"):
     df_filtered.dropna(subset=["Date"], inplace=True)
     df_filtered = df_filtered.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
     df_p = df_filtered.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
+    st.write("Filtered DataFrame for the selected product:", df_filtered)
+    st.write("Prepared DataFrame for Prophet:", df_p)
+    st.write("Forecast DataFrame:", forecast)
+
 
     if df_p.empty:
         st.error("No sales data available for the selected product.")
