@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
+from prophet import Prophet
 
 # ========================
 # Password Protection
@@ -63,9 +64,10 @@ def load_data():
     distance_df = pd.read_csv("extended_distance_dataset.csv")
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
-    return suppliers, emissions, distance_df, inventory, demand
+    train_df = pd.read_csv("train_data.csv")
+    return suppliers, emissions, distance_df, inventory, demand, train_df
 
-suppliers, emissions, distance_df, inventory, demand = load_data()
+suppliers, emissions, distance_df, inventory, demand, train_df = load_data()
 
 # ========================
 # Constants
@@ -128,28 +130,44 @@ model = RandomForestClassifier(n_estimators=150, random_state=42)
 model.fit(demand[['modal_price','distance_km','transport_cost','local_price','central_price']], demand['decision'])
 
 # ========================
-# UI & Logic
+# Sales Forecasting Section
 # ========================
-st.markdown("""
-<div style='text-align: center;'>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png" width="160">
-    <h2 style='color:#0071ce; margin-top: 10px;'>Walmart FreshRoute AI</h2>
-    <p style='font-size:18px;'>Smarter sourcing, fresher produce, lower carbon footprint 🌿</p>
-</div>
-""", unsafe_allow_html=True)
+st.subheader("📈 Forecast Weekly Sales for a Product")
+
+product_options = sorted(train_df['Product_Name'].dropna().unique())
+selected_product = st.selectbox("📦 Select Product for Forecast", product_options)
+
+if st.button("📊 Predict Next Week's Sales"):
+    df_filtered = train_df[train_df["Product_Name"].str.lower() == selected_product.lower()].copy()
+    df_filtered["Date"] = pd.to_datetime(df_filtered["Date"], errors="coerce")
+    df_filtered.dropna(subset=["Date"], inplace=True)
+    df_filtered = df_filtered.set_index("Date")["Quantity_Sold"].resample("W-MON").sum()
+    df_p = df_filtered.reset_index().rename(columns={"Date": "ds", "Quantity_Sold": "y"})
+
+    if df_p.empty:
+        st.error("No sales data available for the selected product.")
+    else:
+        model_prophet = Prophet(weekly_seasonality=True, yearly_seasonality=True)
+        model_prophet.fit(df_p)
+        future = model_prophet.make_future_dataframe(periods=1, freq="W-MON")
+        forecast = model_prophet.predict(future)
+
+        if forecast.empty or 'yhat' not in forecast.columns:
+            st.error("Forecast could not be generated. Please check the data.")
+        else:
+            forecasted_qty = int(forecast["yhat"].values[-1])  # Use the last value for the forecast
+            forecast_date = forecast['ds'].values[-1].strftime('%Y-%m-%d')
+            st.success(f"📦 Predicted sales for next week ({forecast_date}): **{forecasted_qty} units**")
+
+# ========================
+# Sourcing UI
+# ========================
+st.markdown("<hr><h2>🧠 AI Sourcing Decision</h2>", unsafe_allow_html=True)
 
 commodity = st.selectbox("🥦 Select a commodity:", sorted(suppliers['commodity'].dropna().unique()))
 qty_needed = st.number_input("🔢 Quantity Needed (in kg)", min_value=1, max_value=50, value=10)
 
-if "decision_ready" not in st.session_state:
-    st.session_state.decision_ready = False
-if "order_placed" not in st.session_state:
-    st.session_state.order_placed = False
-
 if st.button("🚀 Get AI Decision"):
-    st.session_state.decision_ready = False
-    st.session_state.order_placed = False
-
     matched = suppliers[suppliers['commodity'].str.lower() == commodity.lower()]
     if matched.empty:
         st.error("No suppliers found.")
@@ -186,20 +204,8 @@ if st.button("🚀 Get AI Decision"):
 
         supplier_name = best['supplier_name']
         supply_area = best.get('supply_region', 'Wagholi')
-        if supply_area.lower() == "pune":
-            supply_area = "Wagholi"
         route = f"{supplier_name} → {supply_area} (Pune) → Shanivar Peth (Pune)"
         eta = round(dist / 30, 2)
-
-        st.session_state.order_details = {
-            "commodity": commodity,
-            "qty": qty_needed,
-            "supplier": supplier_name,
-            "supplier_id": best['supplier_id'],
-            "route": route,
-            "final_cost": final_cost,
-            "eta": eta
-        }
 
         st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
@@ -220,24 +226,4 @@ if st.button("🚀 Get AI Decision"):
 <strong>Route:</strong> {route}<br>
 <strong>ETA:</strong> {eta} hrs<br>
 <strong>Decision Time:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}<br>
-</div>""", unsafe_allow_html=True)
-
-        st.session_state.decision_ready = True
-
-if st.session_state.decision_ready and not st.session_state.order_placed:
-    if st.button("🛒 Place Order"):
-        st.session_state.order_placed = True
-
-if st.session_state.order_placed:
-    order = st.session_state.order_details
-    st.markdown(f"""
-<div style='text-align: center; padding: 40px 30px; background-color: #1e1e1e; border-radius: 16px; color: #f0f0f0; font-family: "Segoe UI"; line-height:1.6; max-width:600px; margin:0 auto; border:1px solid #333;'>
-  <div style='font-size:24px; font-weight:600; margin-bottom:16px; color:#00e676;'>✅ Order Placed Successfully!</div>
-  <p style='font-size:18px;'>🛒 You have placed an order for <strong>{order["qty"]} kg of {order["commodity"]}</strong>.</p>
-  <p><strong>🏢 Supplier:</strong> {order["supplier"]} (ID: {order["supplier_id"]})</p>
-  <p><strong>🚚 Route:</strong> {order["route"]}</p>
-  <p><strong>💰 Final Cost:</strong> ₹{order["final_cost"]}</p>
-  <p><strong>⏳ ETA:</strong> {order["eta"]} hours</p>
-  <hr style='border:none; border-top:1px solid #444; margin:20px 0;'>
-  <p style='color:#8bc34a; font-weight:600; font-size:16px;'>🌱 Thanks for choosing sustainability with <span style="color:#4caf50;">Walmart FreshRoute AI</span></p>
 </div>""", unsafe_allow_html=True)
