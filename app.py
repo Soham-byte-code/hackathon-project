@@ -151,13 +151,11 @@ if st.button("📊 Predict Next Week's Sales"):
         model_prophet.fit(df_p)
         future = model_prophet.make_future_dataframe(periods=1, freq="W-MON")
         forecast = model_prophet.predict(future)
-
-        if forecast.empty or 'yhat' not in forecast.columns:
-            st.error("Forecast could not be generated. Please check the data.")
-        else:
-            forecasted_qty = int(forecast["yhat"].values[-1])  # Use the last value for the forecast
-            forecast_date = forecast['ds'].values[-1].strftime('%Y-%m-%d')
-            st.success(f"📦 Predicted sales for next week ({forecast_date}): **{forecasted_qty} units**")
+if forecast['ds'].notna().any():
+    forecast_date = forecast['ds'].values[-1].strftime('%Y-%m-%d')
+else:
+    print("No valid datetime entries in the 'ds' column.")
+    # Handle the case
 
 # ========================
 # Sourcing UI
