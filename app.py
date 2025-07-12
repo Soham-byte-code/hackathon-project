@@ -1,147 +1,40 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime
-from sklearn.ensemble import RandomForestClassifier
-
-# Prophet import with installation check
-try:
-    from prophet import Prophet
-except ImportError:
-    st.error("Please install Prophet using: pip install prophet")
-    st.stop()
-
-# --- Password Protection ---
-def check_password():
-    """Password protection for the app"""
-    correct_password = "Rait@123"
-    password = st.text_input("🔒 Enter Password to Access", type="password")
-    if password == "":
-        st.warning("Please enter a password")
-        st.stop()
-    elif password != correct_password:
-        st.error("❌ Incorrect password")
-        st.stop()
-
-check_password()
-
-# --- Styling ---
-st.set_page_config(
-    page_title="Walmart FreshRoute AI",
-    page_icon="🌿",
-    layout="centered"
-)
-
-custom_css = """
-<style>
-    html, body, [class*="css"] {
-        font-family: 'Segoe UI', sans-serif;
-        color: #222 !important;
-    }
-    .stButton>button {
-        background-color: #ffc220;
-        color: black;
-        font-weight: bold;
-        border-radius: 6px;
-        padding: 10px 25px;
-        margin: 10px auto;
-    }
-    .stButton>button:hover {
-        background-color: #e6ac00;
-        color: white;
-    }
-    .report-box {
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-    }
-</style>
-"""
-st.markdown(custom_css, unsafe_allow_html=True)
-
-# --- Data Loading ---
-@st.cache_data
-def load_data():
-    """Load all required datasets"""
-    try:
-        suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")
-        emissions = pd.read_csv("transport_route_emissions.csv") 
-        distance_df = pd.read_csv("extended_distance_dataset.csv")
-        inventory = pd.read_excel("inventory location.xlsx")
-        demand = pd.read_csv("demand.csv")
-        train_df = pd.read_csv("train_data.csv")
-        return suppliers, emissions, distance_df, inventory, demand, train_df
-    except Exception as e:
-        st.error(f"Error loading data: {str(e)}")
-        st.stop()
-
-suppliers, emissions, distance_df, inventory, demand, train_df = load_data()
-
-# --- Constants ---
-PETROL_PRICE = 106
-CO2_PER_KM_DEFAULT = 0.15
-REALISTIC_SPOILAGE_RATES = {
-    "tomato": 0.01, "onion": 0.003, "potato": 0.004,
-    "cabbage": 0.005, "spinach": 0.012, "cauliflower": 0.006,
-    "carrot": 0.002, "banana": 0.018, "mango": 0.02,
-    "grapes": 0.015, "almonds": 0.0005, "dry fruits": 0.0008,
-    "default": 0.007
-}
-HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", 
-                         "almonds", "dry fruits", "grains", "nuts"]
-VEHICLE_EMISSIONS = {
-    "EV scooter": 0.03, "Bike": 0.02, "Tempo": 0.1,
-    "Mini Truck": 0.12, "Truck": 0.18
-}
-VEHICLE_MILEAGE_BY_TYPE = {
-    "EV scooter": 60, "Bike": 40, "Tempo": 20,
-    "Mini Truck": 15, "Truck": 8
-}
-
-def assign_vehicle(weight_kg):
-    """Assign appropriate vehicle based on weight"""
-    if weight_kg <= 5:
-        return "EV scooter"
-    elif weight_kg <= 20:
-        return "Bike"
-    elif weight_kg <= 50:
-        return "Tempo"
-    else:
-        return "Truck"
-
-# --- Data Preprocessing ---
-def preprocess_data():
-    """Clean and merge supplier data"""
-    try:
-        suppliers = suppliers.merge(
             distance_df[['supplier_id', 'distance_from_inventory_km']], 
             on='supplier_id', how='left'
         )
-        suppliers = suppliers.merge(
+        # Merge with emissions data
+        merged = merged.merge(
             emissions[['supplier_id', 'fuel_cost_per_km', 'co2_per_km', 'spoilage_rate_per_km']],
             on='supplier_id', how='left'
         )
-        suppliers.fillna({
+        
+        # Fill NA values
+        merged.fillna({
             'fuel_cost_per_km': 0,
             'co2_per_km': CO2_PER_KM_DEFAULT,
             'spoilage_rate_per_km': 0.001,
             'distance_from_inventory_km': 50
         }, inplace=True)
         
-        suppliers['emissions_kg'] = suppliers['distance_from_inventory_km'] * suppliers['co2_per_km']
-        suppliers['shelf_life_days'] = np.maximum(1, 20 - (suppliers['distance_from_inventory_km'] // 5))
-        suppliers['shelf_life_days'] = suppliers.apply(
+        # Calculate derived fields
+        merged['emissions_kg'] = merged['distance_from_inventory_km'] * merged['co2_per_km']
+        merged['shelf_life_days'] = np.maximum(1, 20 - (merged['distance_from_inventory_km'] // 5))
+        
+        # Update shelf life for high shelf life commodities
+        merged['shelf_life_days'] = merged.apply(
             lambda row: 90 if row['commodity'].lower() in HIGH_SHELF_COMMODITIES else row['shelf_life_days'],
             axis=1
         )
-        suppliers['local_score'] = suppliers['price_per_unit'] + suppliers['emissions_kg']
-        return suppliers
+        
+        merged['local_score'] = merged['price_per_unit'] + merged['emissions_kg']
+        return merged
     except Exception as e:
         st.error(f"Error preprocessing data: {str(e)}")
         st.stop()
-
-suppliers = preprocess_data()
+# Constants
+CO2_PER_KM_DEFAULT = 0.15
+HIGH_SHELF_COMMODITIES = ["rice", "wheat", "dal", "pulses", "almonds", "dry fruits", "grains", "nuts"]
+# Preprocess the suppliers data
+suppliers = preprocess_suppliers(raw_suppliers)
 
 # --- Dashboard Header ---
 st.title("🌿 Walmart FreshRoute AI Dashboard")
