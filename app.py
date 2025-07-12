@@ -203,6 +203,7 @@ if st.button("🚀 Get AI Decision"):
         st.markdown(f"""<div class='report-text'>
 <strong>Commodity:</strong> {commodity}<br>
 <strong>Supplier:</strong> {supplier_name} (ID: {best['supplier_id']})<br>
+<strong>Available Qty:</strong> {int(best['available_quantity_kg'])} kg<br>
 <strong>Requested Qty:</strong> {qty_needed} kg<br>
 <strong>Local Price:</strong> ₹{best['price_per_unit']} per kg<br>
 <strong>Total Cost:</strong> ₹{total_cost}<br>
