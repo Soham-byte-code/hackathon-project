@@ -58,12 +58,13 @@ html, body, [class*="css"] {
 # ========================
 @st.cache_data
 def load_data():
-    suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")  # updated
+    suppliers = pd.read_csv("final_cleaned_supplier_data_with_prices.csv")  # supplier CSV
     emissions = pd.read_csv("transport_route_emissions.csv")
-    distance_df = pd.read_excel("Distance Dataset.xlsx")
+    distance_df = pd.read_csv("extended_distance_dataset.csv")  # updated to new distance dataset
     inventory = pd.read_excel("inventory location.xlsx")
     demand = pd.read_csv("demand.csv")
     return suppliers, emissions, distance_df, inventory, demand
+
 
 suppliers, emissions, distance_df, inventory, demand = load_data()
 
