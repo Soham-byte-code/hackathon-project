@@ -131,7 +131,6 @@ model.fit(demand[['modal_price','distance_km','transport_cost','local_price','ce
 # UI & Logic
 # ========================
 import random
-from datetime import datetime
 
 st.subheader("📈 Forecast Weekly Sales for a Commodity")
 
@@ -140,14 +139,14 @@ forecast_commodity = st.selectbox("🔮 Select Commodity to Forecast", sorted(su
 
 if st.button("📊 Predict Next Week's Sales"):
     forecasted_qty = random.randint(20, 30)
-    forecast_date = datetime.today().strftime("%Y-%m-%d")
 
     st.success(f"🧾 Commodity: **{forecast_commodity}**")
-    st.info(f"📦 Forecast: **{forecasted_qty} kg needed next week** (Estimated on {forecast_date})")
+    st.info(f"📦 Forecast: **{forecasted_qty} kg needed next week**")
 
     # Optional: Store forecast in session state for reuse
     st.session_state["forecasted_qty"] = forecasted_qty
     st.session_state["forecasted_commodity"] = forecast_commodity
+
 
 st.markdown("""
 <div style='text-align: center;'>
