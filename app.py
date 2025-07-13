@@ -130,6 +130,46 @@ model.fit(demand[['modal_price','distance_km','transport_cost','local_price','ce
 # ========================
 # UI & Logic
 # ========================
+from prophet import Prophet
+
+# ========================
+# Sales Forecast Section
+# ========================
+st.subheader("📈 Forecast Weekly Sales for a Commodity")
+
+# Load training data
+train_df = pd.read_csv("train_data.csv")  # Place your file in the root of repo
+
+# Let user select product
+forecast_commodity = st.selectbox("🔮 Select Commodity to Forecast", sorted(train_df["Product_Name"].unique()), key="forecast_select")
+
+if st.button("📊 Predict Next Week's Sales"):
+    df = train_df[train_df["Product_Name"].str.lower() == forecast_commodity.lower()].copy()
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df.dropna(subset=["Date"], inplace=True)
+
+    weekly = df.set_index("Date")["Quantity_Sold"].resample("W-MON").sum().reset_index()
+    weekly.columns = ["ds", "y"]
+
+    if len(weekly) < 2:
+        st.warning("⚠️ Not enough data to forecast this commodity.")
+    else:
+        model = Prophet(weekly_seasonality=True, yearly_seasonality=True)
+        model.fit(weekly)
+
+        future = model.make_future_dataframe(periods=1, freq="W-MON")
+        forecast = model.predict(future)
+
+        forecasted_qty = int(round(forecast.iloc[-1]["yhat"]))
+        forecast_date = forecast.iloc[-1]["ds"].strftime("%Y-%m-%d")
+
+        st.success(f"🧾 Commodity: **{forecast_commodity}**")
+        st.info(f"📦 Forecast: **{forecasted_qty} kg needed next week** (Week of {forecast_date})")
+
+        # Optional: Store to use in sourcing section
+        st.session_state["forecasted_qty"] = forecasted_qty
+        st.session_state["forecasted_commodity"] = forecast_commodity
+
 st.markdown("""
 <div style='text-align: center;'>
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Walmart_logo.svg/1024px-Walmart_logo.svg.png" width="160">
